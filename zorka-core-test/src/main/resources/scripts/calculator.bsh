@@ -1,0 +1,20 @@
+zorka.require("jvm.bsh");
+
+__calculator() {
+
+  _mbean = "zorka:type=ZorkaStats,name=CalculatorStats";
+
+  spy.add(spy.instrument("CALCULATOR")
+    .onEnter(
+      spy.fetchArg("operator", 1),
+      spy.zorkaLog("INFO", "CALCULATOR", "${operator}"))
+    .onSubmit(
+      spy.zorkaStats("java", _mbean, "stats", "${operator}"))
+    .include(spy.byMethod("com.netuitive.agent.test.Calculator", "calculate"))
+  );
+
+  return this;
+}
+
+calculator = __calculator();
+
