@@ -31,6 +31,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache.http.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.jitlogic.zorka</groupId>
             <artifactId>zorka-common</artifactId>
             <version>${project.version}</version>

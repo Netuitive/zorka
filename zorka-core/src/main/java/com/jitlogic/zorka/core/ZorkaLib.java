@@ -24,6 +24,7 @@ import javax.management.*;
 
 import com.jitlogic.zorka.common.ZorkaService;
 import com.jitlogic.zorka.common.stats.AgentDiagnostics;
+import com.jitlogic.zorka.common.stats.MethodCallStatistics;
 import com.jitlogic.zorka.common.util.*;
 import com.jitlogic.zorka.common.util.FileTrapper;
 import com.jitlogic.zorka.core.integ.QueryTranslator;
@@ -325,6 +326,61 @@ public class ZorkaLib implements ZorkaService {
         return ZorkaUtil.join("\n", lst);
     }
 
+    /**
+     * Lists attributes of given object(s)
+     *
+     * @param mbsName    mbean server name
+     * @param objectName object name (mask)
+     * @param args       attribute chain (as in ObjectInspector.get())
+     * @return a map that contains the jmx stats object path and its MethodCallStatistics object
+     */
+    public Map<String, MethodCallStatistics> stats(String mbsName, String objectName, Object... args) {
+
+        MBeanServerConnection conn = mbsRegistry.lookup(mbsName);
+
+        if (conn == null) {
+            log.error(ZorkaLogger.ZAG_ERRORS, "MBean server named '" + mbsName + "' is not registered.");
+            return null;
+        }
+
+        QueryDef qdef = new QueryDef(mbsName, objectName, "*");
+
+        for (int i = 0; i < args.length; i++) {
+            qdef = qdef.listAs(args[i].toString(), "ARG" + i);
+        }
+
+        ClassLoader cl0 = Thread.currentThread().getContextClassLoader(), cl1 = mbsRegistry.getClassLoader(mbsName);
+
+        Map<String, MethodCallStatistics> statsMap = new HashMap<String, MethodCallStatistics>();
+
+        try {
+
+            if (cl1 != null) {
+                Thread.currentThread().setContextClassLoader(cl1);
+                log.debug(ZorkaLogger.ZAG_DEBUG, "Switching to MBS class loader ...");
+            }
+
+            List<QueryResult> results = new QueryLister(mbsRegistry, qdef).list();
+
+
+            for (QueryResult result : results) {
+                Object val = result.getValue();
+                if (val instanceof MethodCallStatistics) {
+                    MethodCallStatistics stats = (MethodCallStatistics) val;
+                    String key = result.getAttr("objectName").toString();
+                    statsMap.put(key, stats);
+                }
+            }
+
+        } finally {
+            if (cl1 != null) {
+                Thread.currentThread().setContextClassLoader(cl0);
+                log.debug(ZorkaLogger.ZAG_DEBUG, "Switching back from class loader ...");
+            }
+        }
+
+        return statsMap;
+    }
 
     /**
      * Creates zorka dynamic MBean. Such mbean object can be populated with attributes

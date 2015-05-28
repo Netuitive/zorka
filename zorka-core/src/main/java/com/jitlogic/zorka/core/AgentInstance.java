@@ -23,6 +23,7 @@ import com.jitlogic.zorka.common.stats.ValGetter;
 import com.jitlogic.zorka.common.util.ZorkaLog;
 import com.jitlogic.zorka.common.util.ZorkaLogger;
 import com.jitlogic.zorka.common.util.ZorkaUtil;
+import com.jitlogic.zorka.core.integ.netuitive.ZorkaStatsReporter;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixActiveAgent;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixAgent;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixLib;
@@ -143,6 +144,11 @@ public class AgentInstance implements ZorkaService {
      */
     private PerfMonLib perfMonLib;
 
+    /**
+     * Reference to zorka stats reporter
+     */
+    private ZorkaStatsReporter reporter;
+
     private MethodCallStatistics stats = new MethodCallStatistics();
 
     /**
@@ -179,6 +185,10 @@ public class AgentInstance implements ZorkaService {
         initBshLibs();
 
         zorkaAgent.initialize();
+
+        if (config.boolCfg("netuitive.api", true)) {
+            getReporter().start();
+        }
 
         if (config.boolCfg("zorka.diagnostics", true)) {
             createZorkaDiagMBean();
@@ -516,6 +526,18 @@ public class AgentInstance implements ZorkaService {
         return perfMonLib;
     }
 
+    /**
+     * Returns reference to zorka stats reporter
+     *
+     * @return instance of zorka stats reporter
+     */
+    public synchronized ZorkaStatsReporter getReporter() {
+        if (reporter == null) {
+            reporter = new ZorkaStatsReporter(getConfig(), getScheduledExecutor(), getZorkaLib());
+        }
+        return reporter;
+    }
+
 
     /**
      * Returns reference to mbean server registry.
@@ -567,6 +589,15 @@ public class AgentInstance implements ZorkaService {
         if (nagiosAgent != null) {
             nagiosAgent.shutdown();
         }
+
+        if (reporter != null) {
+            reporter.shutdown();
+        }
+
+        if (scheduledExecutor != null) {
+            scheduledExecutor.shutdown();
+            scheduledExecutor = null;
+        }
     }
 
 
@@ -596,7 +627,9 @@ public class AgentInstance implements ZorkaService {
         log.info(ZorkaLogger.ZAG_CONFIG, "Agent configuration scripts executed (" + l + " errors).");
         log.info(ZorkaLogger.ZAG_CONFIG, "Number of matchers in tracer configuration: "
                 + tracer.getMatcherSet().getMatchers().size());
-
+        if (config.boolCfg("netuitive.api", true)) {
+            getReporter().restart();
+        }
 
     }
 
