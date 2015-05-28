@@ -21,7 +21,7 @@ public class RestClient {
     }
 
     public RestResponse post(String content) {
-        HttpPost httpPost = new HttpPost(baseUrl + "/ingest/" + apiKey);
+        HttpPost httpPost = new HttpPost(baseUrl + "/ingest/java/" + apiKey);
         StringEntity httpEntity = null;
         try {
             httpEntity = new StringEntity(content);
