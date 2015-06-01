@@ -8,6 +8,7 @@ import com.jitlogic.zorka.common.util.ZorkaLogger;
 import com.jitlogic.zorka.common.util.ZorkaUtil;
 import com.jitlogic.zorka.core.ZorkaLib;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,9 +30,16 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
         String attributes = config.stringCfg("netuitive.api.stats.attributes", "stats");
         Element e = null;
         try {
-            Map<String, MethodCallStatistics> statsMap = attributes.trim().equals("*") ?
-                    zorka.stats("java", objectName) : zorka.stats("java", objectName, attributes.split(","));
-            e = build(statsMap);
+            for (String attribute : attributes.split(",")) {
+                log.debug(ZorkaLogger.ZPM_DEBUG, "retrieving method call status for mbean=" + objectName + ", attribute=" + attribute);
+                Map<String, MethodCallStatistics> statsMap = zorka.stats("java", objectName, attribute.trim());
+                Element current = build(statsMap);
+                if (e == null) {
+                    e = current;
+                } else {
+                    e.merge(current);
+                }
+            }
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting method call stats with " + e.getMetrics().size() + " metrics");
         } catch (Exception ex) {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished collecting method call stats with error: ", ex);

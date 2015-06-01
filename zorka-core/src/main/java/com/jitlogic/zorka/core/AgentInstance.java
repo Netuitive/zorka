@@ -593,11 +593,6 @@ public class AgentInstance implements ZorkaService {
         if (reporter != null) {
             reporter.shutdown();
         }
-
-        if (scheduledExecutor != null) {
-            scheduledExecutor.shutdown();
-            scheduledExecutor = null;
-        }
     }
 
 

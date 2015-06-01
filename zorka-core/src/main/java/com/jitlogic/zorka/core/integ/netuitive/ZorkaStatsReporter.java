@@ -58,14 +58,13 @@ public class ZorkaStatsReporter implements ZorkaService {
     }
 
     public void restart() {
-        this.shutdown();
         this.init();
         this.start();
     }
 
     @Override
     public void shutdown() {
-        if (future != null && !future.isCancelled() && !future.isDone()) {
+        if (future != null) {
             future.cancel(true);
         }
     }
