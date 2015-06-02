@@ -216,7 +216,7 @@ public class AgentInstance implements ZorkaService {
             zorkaAgent.put("zabbix.active", getZabbixLib());
         }
         
-        if (config.boolCfg("zabbix", true)) {
+        if (config.boolCfg("zabbix", false)) {
             log.info(ZorkaLogger.ZAG_CONFIG, "Enabling ZABBIX subsystem ...");
             getZabbixAgent().start();
             zorkaAgent.put("zabbix", getZabbixLib());
@@ -603,7 +603,7 @@ public class AgentInstance implements ZorkaService {
         config.initLoggers();
         log.info(ZorkaLogger.ZAG_CONFIG, "Agent configuration reloaded ...");
 
-        if (config.boolCfg("zabbix", true)) {
+        if (config.boolCfg("zabbix", false)) {
             getZabbixAgent().restart();
         }
 
@@ -611,7 +611,7 @@ public class AgentInstance implements ZorkaService {
             getZabbixActiveAgent().restart();
         }
         
-        if (config.boolCfg("nagios", true)) {
+        if (config.boolCfg("nagios", false)) {
             getNagiosAgent().restart();
         }
 

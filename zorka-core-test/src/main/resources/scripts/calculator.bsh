@@ -1,9 +1,27 @@
+// This is sample script intended to help understanding how to implement arbitrary method instrumentation.
+
+// To run:
+//  1. update zorka.properties to add it to list of loaded scripts, i.e. scripts = jvm.bsh, calculator.bsh
+//  2. update zorka.properties to set zorka.application = Caculator
+//  3. get the api key by creating a java datasource on Netuitive Cloud: [https://app.netuitive.com].
+//  4. update zorka.properties to set netuitive.api.key using the key obtained from previous step.
+//  5. assuming 'java' command is available from system path, type 'java -javaagent:./netuitive.jar=. -jar zorka-core-test.jar
+//  6. upon prompt, start typing 1+2[enter] 3-3[enter] 2*3[enter] 3/3[enter] 3/0[enter] ...
+//  7. observe a jvm element named 'Calculator' shows up in Netuitive with genernal jvm system metrics and the CalculatorStats method call metrics
+
+// Call zorka.require(...) to load additional scripts that this one depends on.
 zorka.require("jvm.bsh");
 
+// BeanShall has no notion of namespaces, so we simulate namespace using function
+// that returns reference to its own instance and then defining variable that
+// holds instance of this function.
 __calculator() {
 
+  // This defines the jmx mbean that will host the method call statistics
   _mbean = "zorka:type=ZorkaStats,name=CalculatorStats";
 
+  // This adds the spy definition to instrument method 'calculator' of "com.netuitive.agent.test.Calculator" class
+  // The method('caculate') call statistics (calls, errors, time) are grouped/keyed by the method's first argument('operator')
   spy.add(spy.instrument("CALCULATOR")
     .onEnter(
       spy.fetchArg("operator", 1),

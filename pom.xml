@@ -54,6 +54,7 @@
         <module>zorka-common</module>
         <module>zorka-common-test</module>
         <module>zorka-core</module>
+        <module>zorka-core-test</module>
         <module>zorka-agent</module>
         <module>zorka-viewer</module>
         <module>zorka-dist</module>

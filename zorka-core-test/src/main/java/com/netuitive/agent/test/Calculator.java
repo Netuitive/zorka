@@ -3,22 +3,17 @@ package com.netuitive.agent.test;
 public class Calculator {
 
     public Integer calculate(String operator, Integer first, Integer second) {
-        switch(operator) {
-            case "+" : {
-                return add(first, second);
-            }
-            case "-" : {
-                return minus(first, second);
-            }
-            case "*" : {
-                return multiply(first, second);
-            }
-            case "/" : {
-                return divide(first, second);
-            }
-            default : {
-                throw new IllegalArgumentException("'" + operator + "' is not supported, use one of [+|-|*|/] operators");
-            }
+
+        if (operator.equals("+")) {
+            return add(first, second);
+        } else if (operator.equals("-")) {
+            return minus(first, second);
+        } else if (operator.equals("*")) {
+            return multiply(first, second);
+        } else if (operator.equals("/")) {
+            return divide(first, second);
+        } else {
+            throw new IllegalArgumentException("'" + operator + "' is not supported, use one of [+|-|*|/] operators");
         }
     }
 

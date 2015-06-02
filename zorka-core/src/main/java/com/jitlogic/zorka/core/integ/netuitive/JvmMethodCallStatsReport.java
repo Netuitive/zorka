@@ -72,8 +72,8 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
                 elementBuilder.sample(metricId, timestamp, (double) stat.getErrors());
                 //time
                 metricId = ZorkaUtil.join(".", mbeanShortName, statName, "time");
-                elementBuilder.metric(metricId, "total method execution time", "COUNTER", "microseconds");
-                elementBuilder.sample(metricId, timestamp, (double) stat.getTimeUs());
+                elementBuilder.metric(metricId, "total method execution time", "COUNTER", "ms");
+                elementBuilder.sample(metricId, timestamp, (double) stat.getTime());
             }
         }
         return elementBuilder.build();
