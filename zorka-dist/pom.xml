@@ -46,6 +46,8 @@
                                       toFile="${project.build.outputDirectory}/netuitive-zorka-${project.version}/zorka-core-test.jar"/>
                                 <copy file="../zorka-core-test/target/classes/scripts/calculator.bsh"
                                       toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/scripts"/>
+                                <copy file="../zorka-viewer/target/zorka-viewer-${project.version}.jar"
+                                      toFile="${project.build.outputDirectory}/netuitive-zorka-${project.version}/zorka-viewer.jar"/>
                                 <mkdir dir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/templates"/>
                                 <copy toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/templates">
                                     <fileset dir="${project.basedir}/src/templates" defaultexcludes="false">
