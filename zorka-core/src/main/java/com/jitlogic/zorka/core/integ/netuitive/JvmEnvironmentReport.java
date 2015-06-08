@@ -46,9 +46,9 @@ public class JvmEnvironmentReport extends AbstractStatsReport {
             String jvmVendor = (String) zorka.jmx(_mbs, _jvmmbean, "VmVendor");
             addAttribute("jvm.vendor", jvmVendor);
             String classPath = (String) zorka.jmx(_mbs, _jvmmbean, "ClassPath");
-            //addAttribute("jvm.classpath", classPath);
+            addAttribute("jvm.classpath", classPath);
             String[] jvmArgs = (String[]) zorka.jmx(_mbs, _jvmmbean, "InputArguments");
-            //addAttribute("jvm.args", ZorkaUtil.join(";", jvmArgs));
+            addAttribute("jvm.args", ZorkaUtil.join(";", jvmArgs));
 
             //heap
             String _memmbean = "java.lang:type=Memory";
