@@ -21,6 +21,7 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
     public Element collect(Long timestamp) {
         log.debug(ZorkaLogger.ZPM_DEBUG, "start collecting system stats");
         try {
+            elementBuilder.clearMetricsAndSamples();
             String _mbs = "java";
 
             //classes

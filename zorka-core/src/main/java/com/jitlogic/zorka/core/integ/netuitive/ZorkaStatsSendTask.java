@@ -55,6 +55,8 @@ public class ZorkaStatsSendTask implements Runnable {
             }
         } catch (Exception e) {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished reporting zorka stats with error: ", e);
+        } finally {
+            e.clearMetricsAndSamples();
         }
         Long finished = System.currentTimeMillis();
         log.debug(ZorkaLogger.ZPM_DEBUG, "finished reporting zorka stats using %d ms", finished - timestamp);

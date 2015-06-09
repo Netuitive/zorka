@@ -30,6 +30,7 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
         String attributes = config.stringCfg("netuitive.api.stats.attributes", "stats");
         Element e = null;
         try {
+            elementBuilder.clearMetricsAndSamples();
             for (String attribute : attributes.split(",")) {
                 log.debug(ZorkaLogger.ZPM_DEBUG, "retrieving method call status for mbean=" + objectName + ", attribute=" + attribute);
                 Map<String, MethodCallStatistics> statsMap = zorka.stats("java", objectName, attribute.trim());

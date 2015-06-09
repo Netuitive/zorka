@@ -48,4 +48,8 @@ public class ElementBuilder {
     public Element build() {
         return element;
     }
+
+    public void clearMetricsAndSamples() {
+        element.clearMetricsAndSamples();
+    }
 }

@@ -53,6 +53,11 @@ public class Element {
         }
     }
 
+    public void clearMetricsAndSamples() {
+        this.metrics.clear();
+        this.samples.clear();
+    }
+
     public String getId() {
         return id;
     }
