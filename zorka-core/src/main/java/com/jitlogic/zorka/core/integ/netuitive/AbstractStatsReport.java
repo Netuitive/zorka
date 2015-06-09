@@ -15,7 +15,7 @@ public abstract class AbstractStatsReport implements StatsReport {
         String host = config.stringCfg("zorka.hostname", "localhost");
         String application = config.stringCfg("zorka.application", "My Application");
         String elementId = host + " java: " + application.trim();
-        this.elementBuilder = new ElementBuilder(elementId, application, "jvm");
+        this.elementBuilder = new ElementBuilder(elementId, application, "JVM");
     }
 
     @Override
