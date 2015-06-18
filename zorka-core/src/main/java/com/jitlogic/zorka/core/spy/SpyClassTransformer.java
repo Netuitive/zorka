@@ -298,11 +298,22 @@ public class SpyClassTransformer implements ClassFileTransformer {
 
             boolean doComputeFrames = computeFrames && (cbf[7] > (byte) 0x32);
 
-            ClassReader cr = new ClassReader(cbf);
-            ClassWriter cw = new ClassWriter(cr, doComputeFrames ? ClassWriter.COMPUTE_FRAMES : 0);
-            ClassVisitor scv = createVisitor(classLoader, clazzName, found, tracer, cw);
-            cr.accept(scv, 0);
-            buf = cw.toByteArray();
+            try {
+                ClassReader cr = new ClassReader(cbf);
+                ClassWriter cw = new ClassWriter(cr, doComputeFrames ? ClassWriter.COMPUTE_FRAMES : 0);
+                ClassVisitor scv = createVisitor(classLoader, clazzName, found, tracer, cw);
+                cr.accept(scv, 0);
+                buf = cw.toByteArray();
+            } catch (RuntimeException re) {
+                if (ZorkaLogger.isLogMask(ZorkaLogger.ZSP_CLASS_TRC)) {
+                    log.error(ZorkaLogger.ZSP_CLASS_TRC, "Error Transforming class: %s", re, className);
+                }
+                throw re;
+            }
+
+            if (ZorkaLogger.isLogMask(ZorkaLogger.ZSP_CLASS_TRC)) {
+                log.debug(ZorkaLogger.ZSP_CLASS_TRC, "Transformed class: %s", className);
+            }
 
             long tt2 = System.nanoTime();
             classesTransformed.logCall(tt2 - tt1);
