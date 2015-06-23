@@ -34,7 +34,7 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
 
             Long classesUnLoaded = (Long) zorka.jmx(_mbs, _clmbean, "UnloadedClassCount");
             metricId = "system.UnloadedClasses";
-            addMetric(metricId, "Unloaded Classes", "GAUGE", "");
+            addMetric(metricId, "Unloaded Classes", "COUNTER", "");
             addSample(metricId, timestamp, (double)classesUnLoaded.longValue());
 
             //threads
