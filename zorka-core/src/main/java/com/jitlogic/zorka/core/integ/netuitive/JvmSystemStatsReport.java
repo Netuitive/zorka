@@ -24,124 +24,86 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             elementBuilder.clearMetricsAndSamples();
             String _mbs = "java";
 
-            String metricId = null;
             //classes
             String _clmbean = "java.lang:type=ClassLoading";
             Integer classesLoaded = (Integer) zorka.jmx(_mbs, _clmbean, "LoadedClassCount");
-            metricId = "system.LoadedClasses";
-            addMetric(metricId, "Loaded Classes", "GAUGE", "");
-            addSample(metricId, timestamp, (double)classesLoaded.intValue());
+            addMetricSample("system.LoadedClasses", "Loaded Classes", "GAUGE", "", timestamp, classesLoaded);
 
             Long classesUnLoaded = (Long) zorka.jmx(_mbs, _clmbean, "UnloadedClassCount");
-            metricId = "system.UnloadedClasses";
-            addMetric(metricId, "Unloaded Classes", "COUNTER", "");
-            addSample(metricId, timestamp, (double)classesUnLoaded.longValue());
+            addMetricSample("system.UnloadedClasses", "Unloaded Classes", "COUNTER", "", timestamp, classesUnLoaded);
 
             //threads
             String _tmbean = "java.lang:type=Threading";
             Integer threadCount = (Integer) zorka.jmx(_mbs, _tmbean, "ThreadCount");
-            metricId = "system.threads";
-            addMetric(metricId, "Threads", "GAUGE", "");
-            addSample(metricId, timestamp, (double) threadCount.intValue());
+            addMetricSample("system.threads", "Threads", "GAUGE", "", timestamp, threadCount);
 
             //heap
             String _mmbean = "java.lang:type=Memory";
             Long heapCommitted = (Long) zorka.jmx(_mbs, _mmbean, "HeapMemoryUsage", "committed");
-            metricId = "heap.committed";
-            addMetric(metricId, "Heap Committed", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) heapCommitted.longValue());
+            addMetricSample("heap.committed", "Heap Committed", "GAUGE", "B", timestamp, heapCommitted);
 
             Long heapUsed = (Long) zorka.jmx(_mbs, _mmbean, "HeapMemoryUsage", "used");
-            metricId = "heap.used";
-            addMetric(metricId, "Heap Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) heapUsed.longValue());
+            addMetricSample("heap.used", "Heap Used", "GAUGE", "B", timestamp, heapUsed);
 
             //memory pool
             String _psesmbean = "java.lang:type=MemoryPool,name=PS Eden Space";
             Long psesCommitted = (Long) zorka.jmx(_mbs, _psesmbean, "Usage", "committed");
-            metricId = "mempool.PSEdenSpace.committed";
-            addMetric(metricId, "Memory Pool PS Eden Space Committed", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psesCommitted.longValue());
+            addMetricSample("mempool.PSEdenSpace.committed", "Memory Pool PS Eden Space Committed", "GAUGE", "B", timestamp, psesCommitted);
 
             Long psesUsed = (Long) zorka.jmx(_mbs, _psesmbean, "Usage", "used");
-            metricId = "mempool.PSEdenSpace.used";
-            addMetric(metricId, "Memory Pool PS Eden Space Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psesUsed.longValue());
+            addMetricSample("mempool.PSEdenSpace.used", "Memory Pool PS Eden Space Used", "GAUGE", "B", timestamp, psesUsed);
 
             Long psesMax = (Long) zorka.jmx(_mbs, _psesmbean, "Usage", "max");
-            metricId = "mempool.PSEdenSpace.max";
-            addMetric(metricId, "Memory Pool PS Eden Space Max", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psesMax.longValue());
+            addMetricSample("mempool.PSEdenSpace.max", "Memory Pool PS Eden Space Max", "GAUGE", "B", timestamp, psesMax);
 
             String _psssmbean = "java.lang:type=MemoryPool,name=PS Survivor Space";
             Long psssCommitted = (Long) zorka.jmx(_mbs, _psssmbean, "Usage", "committed");
-            metricId = "mempool.PSSurvivorSpace.committed";
-            addMetric(metricId, "Memory Pool PS Survivor Space Committed", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psssCommitted.longValue());
+            addMetricSample("mempool.PSSurvivorSpace.committed", "Memory Pool PS Survivor Space Committed", "GAUGE", "B", timestamp, psssCommitted);
 
             Long psssUsed = (Long) zorka.jmx(_mbs, _psssmbean, "Usage", "used");
-            metricId = "mempool.PSSurvivorSpace.used";
-            addMetric(metricId, "Memory Pool PS Survivor Space Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psssUsed.longValue());
+            addMetricSample("mempool.PSSurvivorSpace.used", "Memory Pool PS Survivor Space Used", "GAUGE", "B", timestamp, psssUsed);
 
             Long psssMax = (Long) zorka.jmx(_mbs, _psssmbean, "Usage", "max");
-            metricId = "mempool.PSSurvivorSpace.max";
-            addMetric(metricId, "Memory Pool PS Survivor Space Max", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psssMax.longValue());
+            addMetricSample("mempool.PSSurvivorSpace.max", "Memory Pool PS Survivor Space Max", "GAUGE", "B", timestamp, psssMax);
 
             String _psogmbean = "java.lang:type=MemoryPool,name=PS Old Gen";
             Long psogCommitted = (Long) zorka.jmx(_mbs, _psogmbean, "Usage", "committed");
-            metricId = "mempool.PSOldGen.committed";
-            addMetric(metricId, "Memory Pool PS Old Gen Committed", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psogCommitted.longValue());
+            addMetricSample("mempool.PSOldGen.committed", "Memory Pool PS Old Gen Committed", "GAUGE", "B", timestamp, psogCommitted);
 
             Long psogUsed = (Long) zorka.jmx(_mbs, _psogmbean, "Usage", "used");
-            metricId = "mempool.PSOldGen.used";
-            addMetric(metricId, "Memory Pool PS Old Gen Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psogUsed.longValue());
+            addMetricSample("mempool.PSOldGen.used", "Memory Pool PS Old Gen Used", "GAUGE", "B", timestamp, psogUsed);
 
             Long psogMax = (Long) zorka.jmx(_mbs, _psogmbean, "Usage", "max");
-            metricId = "mempool.PSOldGen.max";
-            addMetric(metricId, "Memory Pool PS Old Gen Max", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) psogMax.longValue());
+            addMetricSample("mempool.PSOldGen.max", "Memory Pool PS Old Gen Max", "GAUGE", "B", timestamp, psogMax);
 
             String _msmbean = "java.lang:type=MemoryPool,name=Metaspace";
             Long msUsed = (Long) zorka.jmx(_mbs, _msmbean, "Usage", "used");
-            metricId = "mempool.Metaspace.committed";
-            addMetric(metricId, "Memory Pool Metaspace Committed", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) msUsed.longValue());
+            addMetricSample("mempool.Metaspace.committed", "Memory Pool Metaspace Committed", "GAUGE", "B", timestamp, msUsed);
 
             String _ccsmbean = "java.lang:type=MemoryPool,name=Compressed Class Space";
             Long ccsUsed = (Long) zorka.jmx(_mbs, _ccsmbean, "Usage", "used");
-            metricId = "mempool.CompressedClassSpace.used";
-            addMetric(metricId, "Memory Pool Compressed Class Space Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) ccsUsed.longValue());
+            addMetricSample("mempool.CompressedClassSpace.used", "Memory Pool Compressed Class Space Used", "GAUGE", "B", timestamp, ccsUsed);
 
             String _ccmbean = "java.lang:type=MemoryPool,name=Code Cache";
-            Long _ccUsed = (Long) zorka.jmx(_mbs, _ccmbean, "Usage", "used");
-            metricId = "mempool.CodeCache.used";
-            addMetric(metricId, "Memory Pool Code Cache Used", "GAUGE", "B");
-            addSample(metricId, timestamp, (double) ccsUsed.longValue());
+            Long ccUsed = (Long) zorka.jmx(_mbs, _ccmbean, "Usage", "used");
+            addMetricSample("mempool.CodeCache.used", "Memory Pool Code Cache Used", "GAUGE", "B", timestamp, ccUsed);
 
             //cpu
             String _osmbean = "java.lang:type=OperatingSystem";
             Double processCpuLoad = (Double) zorka.jmx(_mbs, _osmbean, "ProcessCpuLoad");
-            metricId = "cpu.used.percent";
-            addMetric(metricId, "Operating System Process CPU Load", "GAUGE", "%");
-            addSample(metricId, timestamp, processCpuLoad * 100);
+            if (processCpuLoad != null) {
+                elementBuilder.metric("cpu.used.percent", "Operating System Process CPU Load", "GAUGE", "%");
+                elementBuilder.sample("cpu.used.percent", timestamp, processCpuLoad * 100);
+            }
 
             //garbage collector
             String _psmsmbean = "java.lang:type=GarbageCollector,name=PS MarkSweep";
             Long psmsCollectionTime = (Long) zorka.jmx(_mbs, _psmsmbean, "CollectionTime");
-            metricId = "gc.PSMarkSweep.CollectionTime";
-            addMetric(metricId, "GC PS MarkSweep Collection Time", "GAUGE", "ms");
-            addSample(metricId, timestamp, (double) psmsCollectionTime.longValue());
+            addMetricSample("gc.PSMarkSweep.CollectionTime", "GC PS MarkSweep Collection Time", "GAUGE", "ms", timestamp, psmsCollectionTime);
 
             String _pssmbean = "java.lang:type=GarbageCollector,name=PS Scavenge";
             Long pssCollectionTime = (Long) zorka.jmx(_mbs, _pssmbean, "CollectionTime");
-            metricId = "gc.PSScavenge.CollectionTime";
-            addMetric(metricId, "GC PS Scavenge Collection Time", "GAUGE", "ms");
-            addSample(metricId, timestamp, (double) pssCollectionTime.longValue());
+            addMetricSample("gc.PSScavenge.CollectionTime", "GC PS Scavenge Collection Time", "GAUGE", "ms", timestamp, pssCollectionTime);
 
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting system stats");
         } catch (Exception e) {
@@ -150,11 +112,16 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
         return elementBuilder.build();
     }
 
-    private void addMetric(String id, String name, String type, String unit) {
-        elementBuilder.metric(id, name, type, unit);
-    }
-
-    private void addSample(String metricId, Long timestamp, double val) {
-        elementBuilder.sample(metricId, timestamp, val, true);
+    private void addMetricSample(String metricId, String name, String type, String unit, Long timestamp, Object value) {
+        if (value == null) {
+            return;
+        }
+        try {
+            Double val = Double.valueOf(value.toString());
+            elementBuilder.metric(metricId, name, type, unit);
+            elementBuilder.sample(metricId, timestamp, val);
+        } catch (NumberFormatException nfe) {
+            log.error(ZorkaLogger.ZPM_ERRORS, "unable to parse sample value: " + value.toString() + " to a double");
+        }
     }
 }
