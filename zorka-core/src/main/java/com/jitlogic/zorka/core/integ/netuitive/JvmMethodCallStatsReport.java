@@ -65,16 +65,16 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
                 MethodCallStatistic stat = stats.getMethodCallStatistic(statName);
                 //calls
                 String metricId = ZorkaUtil.join(".", mbeanShortName, statName, "calls");
-                elementBuilder.metric(metricId, "method calls", "COUNTER", null);
-                elementBuilder.sample(metricId, timestamp, (double)stat.getCalls());
+                elementBuilder.metric(metricId.toLowerCase(), "Method Calls", "COUNTER", null);
+                elementBuilder.sample(metricId.toLowerCase(), timestamp, (double)stat.getCalls());
                 //errors
                 metricId = ZorkaUtil.join(".", mbeanShortName, statName, "errors");
-                elementBuilder.metric(metricId, "method errors", "COUNTER", null);
-                elementBuilder.sample(metricId, timestamp, (double) stat.getErrors());
+                elementBuilder.metric(metricId.toLowerCase(), "Method Errors", "COUNTER", null);
+                elementBuilder.sample(metricId.toLowerCase(), timestamp, (double) stat.getErrors());
                 //time
                 metricId = ZorkaUtil.join(".", mbeanShortName, statName, "time");
-                elementBuilder.metric(metricId, "total method execution time", "COUNTER", "ms");
-                elementBuilder.sample(metricId, timestamp, (double) stat.getTime());
+                elementBuilder.metric(metricId.toLowerCase(), "Total Method Execution Time", "COUNTER", "ms");
+                elementBuilder.sample(metricId.toLowerCase(), timestamp, (double) stat.getTime());
             }
         }
         return elementBuilder.build();
