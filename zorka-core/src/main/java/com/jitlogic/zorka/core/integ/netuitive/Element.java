@@ -3,7 +3,7 @@ package com.jitlogic.zorka.core.integ.netuitive;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Element implements Cloneable{
+public class Element {
     private String id;
     private String name;
     private String type;
@@ -99,19 +99,4 @@ public class Element implements Cloneable{
     }
     
     
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Element clone = (Element) super.clone();
-        if (this.samples != null) {
-            Set<Sample> clonedSamples = new HashSet<Sample>();
-            for(Sample sample : this.samples){
-                clonedSamples.add(sample);
-            }
-            clone.setSamples(clonedSamples);
-        }
-        else{
-            clone.setSamples(null);
-        }
-        return clone;
-    }
 }
