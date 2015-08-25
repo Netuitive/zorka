@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.jitlogic.zorka.core.integ.netuitive;
 
 import java.util.HashMap;
@@ -10,10 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- * @author john.king
- */
 public class ZorkaStatsDataStorage {
     public static volatile Element systemStats = null;
     public static volatile Element methodStats = null;
@@ -21,15 +12,10 @@ public class ZorkaStatsDataStorage {
     public static volatile Map<String, Sample> historicalSamples = null;
     public static volatile Map<String, Metric> metrics = null;
     
-    public static void resetMaps() {
-        currentSamples = new HashMap<String, Sample>();
+    public static void newInterval(){
         if (historicalSamples == null) {
             historicalSamples = new HashMap<String, Sample>();
         }
-        metrics = new HashMap<String, Metric>();
-    }
-    
-    public static void newInterval(){
         currentSamples = new HashMap<String, Sample>();
         metrics = new HashMap<String, Metric>();
         if(systemStats != null){

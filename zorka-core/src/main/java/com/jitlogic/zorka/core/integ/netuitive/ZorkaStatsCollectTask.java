@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.jitlogic.zorka.core.integ.netuitive;
 
 import com.jitlogic.zorka.common.util.ZorkaConfig;
@@ -12,10 +7,6 @@ import com.jitlogic.zorka.core.ZorkaLib;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author john.king
- */
 public class ZorkaStatsCollectTask implements Runnable{
     
     private final static ZorkaLog log = ZorkaLogger.getLog(ZorkaStatsCollectTask.class);

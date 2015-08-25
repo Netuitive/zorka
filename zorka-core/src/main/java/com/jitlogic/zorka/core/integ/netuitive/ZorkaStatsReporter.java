@@ -60,7 +60,7 @@ public class ZorkaStatsReporter implements ZorkaService {
         this.interval = config.longCfg("netuitive.api.interval", 60L);
         this.sendTask = new ZorkaStatsSendTask(config, zorka, restClient);
         this.collectTask = new ZorkaStatsCollectTask(config, zorka);
-        ZorkaStatsDataStorage.resetMaps();
+        ZorkaStatsDataStorage.newInterval();
     }
 
     public void start() {
