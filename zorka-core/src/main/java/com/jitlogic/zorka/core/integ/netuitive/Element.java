@@ -3,7 +3,7 @@ package com.jitlogic.zorka.core.integ.netuitive;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Element {
+public class Element implements Cloneable{
     private String id;
     private String name;
     private String type;
@@ -21,6 +21,10 @@ public class Element {
 
     public void addAttribute(String name, Object value) {
         attributes.add(Attribute.createAttribute(name, value));
+    }
+
+    public void setMetrics(Set<Metric> metrics) {
+        this.metrics = metrics;
     }
 
     public void addTag(String name, String value) {
@@ -88,5 +92,26 @@ public class Element {
 
     public Set<Sample> getSamples() {
         return samples;
+    }
+    
+    public void setSamples(Set<Sample> samples){
+        this.samples = samples;
+    }
+    
+    
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Element clone = (Element) super.clone();
+        if (this.samples != null) {
+            Set<Sample> clonedSamples = new HashSet<Sample>();
+            for(Sample sample : this.samples){
+                clonedSamples.add(sample);
+            }
+            clone.setSamples(clonedSamples);
+        }
+        else{
+            clone.setSamples(null);
+        }
+        return clone;
     }
 }

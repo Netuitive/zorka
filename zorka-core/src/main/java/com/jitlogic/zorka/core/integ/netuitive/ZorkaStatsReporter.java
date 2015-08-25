@@ -17,6 +17,8 @@ public class ZorkaStatsReporter implements ZorkaService {
 
     /* Logger */
     private final ZorkaLog log = ZorkaLogger.getLog(ZorkaStatsReporter.class);
+    
+    private final Long MINUTE_MILLIS = 60L * 1000L;
 
     private String baseUrl;
     private String apiKey;
@@ -27,8 +29,11 @@ public class ZorkaStatsReporter implements ZorkaService {
     private RestClient restClient;
 
     private ScheduledExecutorService scheduler;
-    private ScheduledFuture future;
-    private ZorkaStatsSendTask task;
+    private ScheduledFuture sendFuture;
+    private ScheduledFuture collectFuture;
+    private ZorkaStatsSendTask sendTask;
+    private ZorkaStatsCollectTask collectTask;
+    
 
     private ZorkaLib zorka;
 
@@ -53,25 +58,33 @@ public class ZorkaStatsReporter implements ZorkaService {
                 connectTimeout,
                 connectionRequesTimeout);
         this.interval = config.longCfg("netuitive.api.interval", 60L);
-        this.task = new ZorkaStatsSendTask(
-                config,
-                zorka,
-                restClient);
+        this.sendTask = new ZorkaStatsSendTask(config, zorka, restClient);
+        this.collectTask = new ZorkaStatsCollectTask(config, zorka);
+        ZorkaStatsDataStorage.resetMaps();
     }
 
     public void start() {
-        future = scheduler.scheduleAtFixedRate(task, 0, interval, TimeUnit.SECONDS);
+        sendFuture = scheduler.scheduleAtFixedRate(sendTask, calculateMinuteOffset(System.currentTimeMillis()), 60L, TimeUnit.SECONDS);
+        collectFuture = scheduler.scheduleAtFixedRate(collectTask, 0L, interval, TimeUnit.SECONDS);
     }
 
     public void restart() {
         this.init();
         this.start();
     }
+    
+    private Long calculateMinuteOffset(Long timestamp){
+        Long ret = (MINUTE_MILLIS - (timestamp % MINUTE_MILLIS))/1000;
+        return ret;
+    }
 
     @Override
     public void shutdown() {
-        if (future != null) {
-            future.cancel(true);
+        if (sendFuture != null) {
+            sendFuture.cancel(true);
+        }
+        if(collectFuture != null){
+            collectFuture.cancel(true);
         }
     }
 }
