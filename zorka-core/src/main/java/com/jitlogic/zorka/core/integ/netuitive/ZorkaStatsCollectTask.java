@@ -12,8 +12,8 @@ public class ZorkaStatsCollectTask implements Runnable{
     private final static ZorkaLog log = ZorkaLogger.getLog(ZorkaStatsCollectTask.class);
     
     
-    private static JvmSystemStatsReport systemStatsReport;
-    private static JvmMethodCallStatsReport methodCallStatsReport;
+    private final JvmSystemStatsReport systemStatsReport;
+    private final JvmMethodCallStatsReport methodCallStatsReport;
     
     public ZorkaStatsCollectTask(
             ZorkaConfig config,
@@ -27,17 +27,15 @@ public class ZorkaStatsCollectTask implements Runnable{
         
         synchronized(ZorkaStatsDataStorage.class){
             log.debug(ZorkaLogger.ZPM_DEBUG, "start collecting zorka stats");
-            Long timestamp = System.currentTimeMillis();
+            Long start = System.currentTimeMillis();
             processElements();
-            Long finished = System.currentTimeMillis();
-            log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting zorka stats using %d ms", finished - timestamp);
+            Long finish = System.currentTimeMillis();
+            log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting zorka stats using %d ms", finish - start);
         }
         
     }
-    /**
-     * this should ONLY be called in a synchronized(ZorkaStatsDataStorage.class) block!!
-     */
-    private static void processElements(){
+    
+    private void processElements(){
         
         //system
         Element curSystemStats = systemStatsReport.collect(System.currentTimeMillis());
@@ -55,7 +53,7 @@ public class ZorkaStatsCollectTask implements Runnable{
         
     }
     
-    private static void processElement(Element element) {
+    private void processElement(Element element) {
         //add new metrics
         for (Metric metric : element.getMetrics()) {
             if (!ZorkaStatsDataStorage.metrics.containsKey(metric.getId())) {
@@ -67,17 +65,20 @@ public class ZorkaStatsCollectTask implements Runnable{
         for (Sample sample : element.getSamples()) {
             Double val = sample.getVal();
             Metric metric = ZorkaStatsDataStorage.metrics.get(sample.getMetricId());
+            //adjust val to convert counters to gauges
             if (metric != null) {
                 if (metric.getType().equals("COUNTER")) {
                     Sample oldSample = ZorkaStatsDataStorage.historicalSamples.get(sample.getMetricId());
                     if (oldSample != null) {
                         val = val - oldSample.getVal();
                     }
+                    //set historical sample data to keep track of counters
+                    ZorkaStatsDataStorage.historicalSamples.put(sample.getMetricId(), sample);
                 }
             }
             //if we don't have a sample yet
+            Sample newSample;
             if (!ZorkaStatsDataStorage.currentSamples.containsKey(sample.getMetricId())) {
-                Sample newSample;
                 try {
                     newSample = (Sample) sample.clone();
                     newSample.setAvg(val);
@@ -93,7 +94,7 @@ public class ZorkaStatsCollectTask implements Runnable{
 
             } //if we already have a sample
             else {
-                Sample newSample = ZorkaStatsDataStorage.currentSamples.get(sample.getMetricId());
+                newSample = ZorkaStatsDataStorage.currentSamples.get(sample.getMetricId());
                 newSample.setAvg((newSample.getAvg() * newSample.getCnt() + val) / (newSample.getCnt() + 1));
                 newSample.setSum(newSample.getSum() + val);
                 if (val < newSample.getMin()) {
@@ -105,8 +106,6 @@ public class ZorkaStatsCollectTask implements Runnable{
                 newSample.setCnt(newSample.getCnt() + 1);
                 newSample.setVal(null);
             }
-            //set historical sample data to keep track of counters
-            ZorkaStatsDataStorage.historicalSamples.put(sample.getMetricId(), sample);
         }
     }
     

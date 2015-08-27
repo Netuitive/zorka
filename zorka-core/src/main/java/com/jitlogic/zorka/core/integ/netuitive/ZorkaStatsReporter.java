@@ -20,22 +20,19 @@ public class ZorkaStatsReporter implements ZorkaService {
     
     private final Long MINUTE_MILLIS = 60L * 1000L;
 
-    private String baseUrl;
-    private String apiKey;
     private long interval;
-
-    private ZorkaConfig config;
+    
+    private final ScheduledExecutorService scheduler;
 
     private RestClient restClient;
+    
+    private final ZorkaConfig config;
+    private final ZorkaLib zorka;
 
-    private ScheduledExecutorService scheduler;
     private ScheduledFuture sendFuture;
     private ScheduledFuture collectFuture;
     private ZorkaStatsSendTask sendTask;
     private ZorkaStatsCollectTask collectTask;
-    
-
-    private ZorkaLib zorka;
 
     public ZorkaStatsReporter(
             ZorkaConfig config,
@@ -64,7 +61,7 @@ public class ZorkaStatsReporter implements ZorkaService {
     }
 
     public void start() {
-        sendFuture = scheduler.scheduleAtFixedRate(sendTask, calculateMinuteOffset(System.currentTimeMillis()), 60L, TimeUnit.SECONDS);
+        sendFuture = scheduler.scheduleAtFixedRate(sendTask, calculateMinuteOffset(System.currentTimeMillis()), MINUTE_MILLIS, TimeUnit.MILLISECONDS);
         collectFuture = scheduler.scheduleAtFixedRate(collectTask, 0L, interval, TimeUnit.SECONDS);
     }
 
@@ -74,7 +71,7 @@ public class ZorkaStatsReporter implements ZorkaService {
     }
     
     private Long calculateMinuteOffset(Long timestamp){
-        Long ret = (MINUTE_MILLIS - (timestamp % MINUTE_MILLIS))/1000;
+        Long ret = MINUTE_MILLIS - (timestamp % MINUTE_MILLIS);
         return ret;
     }
 

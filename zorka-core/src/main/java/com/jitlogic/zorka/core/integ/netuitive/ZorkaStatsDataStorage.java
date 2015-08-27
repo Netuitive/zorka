@@ -26,19 +26,26 @@ public class ZorkaStatsDataStorage {
         }
     }
     
-    public static Element prepareForExport(){
+    public static Element prepareForExport() {
         Set<Sample> samples = new HashSet<Sample>();
-        for(Sample sample : currentSamples.values()){
+        for (Sample sample : currentSamples.values()) {
             samples.add(sample);
         }
         Set<Metric> exportMetrics = new HashSet<Metric>();
-        for(Metric metric : metrics.values()){
+        for (Metric metric : metrics.values()) {
             exportMetrics.add(metric);
         }
-        Element e = systemStats;
-        e.merge(methodStats);
-        e.setSamples(samples);
-        e.setMetrics(exportMetrics);
+        Element e = null;
+        if (systemStats != null) {
+            e = systemStats;
+            e.merge(methodStats);
+        } else if (methodStats != null) {
+            e = methodStats;
+        }
+        if (e != null) {
+            e.setSamples(samples);
+            e.setMetrics(exportMetrics);
+        }
         return e;
     }
 }

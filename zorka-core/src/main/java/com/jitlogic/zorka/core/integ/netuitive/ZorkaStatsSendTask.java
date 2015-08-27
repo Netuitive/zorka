@@ -12,11 +12,12 @@ public class ZorkaStatsSendTask implements Runnable {
     /* Logger */
     private final ZorkaLog log = ZorkaLogger.getLog(ZorkaStatsSendTask.class);
 
-    private RestClient restClient;
-    private JSONWriter jsonWriter;
-    private JvmEnvironmentReport environmentReport;
-    Element e;
-    
+    private final RestClient restClient;
+    private final JSONWriter jsonWriter;
+    private final JvmEnvironmentReport environmentReport;
+    private static final String TYPE_COUNTER_JSON = "\"type\":\"COUNTER\"";
+    private static final String TYPE_GAUGE_JSON = "\"type\":\"GAUGE\"";
+    Element e = null;
 
     public ZorkaStatsSendTask(
             ZorkaConfig config,
@@ -27,30 +28,38 @@ public class ZorkaStatsSendTask implements Runnable {
         this.environmentReport = new JvmEnvironmentReport(config, zorka);
         
     }
+    
+    private void intervalCleanUp() {
+        if (e != null) {
+            e.clearMetricsAndSamples();
+        }
+        ZorkaStatsDataStorage.newInterval();
+    }
 
     @Override
     public void run() {
         
         synchronized (ZorkaStatsDataStorage.class) {
             log.debug(ZorkaLogger.ZPM_DEBUG, "start reporting zorka stats");
-            Long timestamp = System.currentTimeMillis();
+            Long start = System.currentTimeMillis();
             try {
                 e = this.environmentReport.collect(System.currentTimeMillis());
-                e.merge(ZorkaStatsDataStorage.prepareForExport());
-                if (e.getSamples().size() > 0) {
-                    String payload = jsonWriter.write(Collections.singletonList(e));
-                    //we convert counter types to gauges
-                    restClient.post(payload.replace("\"type\":\"COUNTER\"", "\"type\":\"GAUGE\""));
+                if (e != null) {
+                    e.merge(ZorkaStatsDataStorage.prepareForExport());
+                    if (e.getSamples().size() > 0) {
+                        String payload = jsonWriter.write(Collections.singletonList(e));
+                        //we convert counter types to gauges because the data coversion is done by us.
+                        restClient.post(payload.replace(TYPE_COUNTER_JSON, TYPE_GAUGE_JSON));
+                    }
                 }
-            } catch (Exception e) {
-                log.error(ZorkaLogger.ZPM_ERRORS, "finished reporting zorka stats with error: ", e);
+            } catch (Exception ex) {
+                log.error(ZorkaLogger.ZPM_ERRORS, "finished reporting zorka stats with error: ", ex);
             }
             finally{
-                e.clearMetricsAndSamples();
-                ZorkaStatsDataStorage.newInterval();
+                this.intervalCleanUp();
             }
             Long finished = System.currentTimeMillis();
-            log.debug(ZorkaLogger.ZPM_DEBUG, "finished reporting zorka stats using %d ms", finished - timestamp);
+            log.debug(ZorkaLogger.ZPM_DEBUG, "finished reporting zorka stats using %d ms", finished - start);
         }
         
     }
