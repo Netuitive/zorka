@@ -63,50 +63,54 @@ public class ZorkaStatsCollectTask implements Runnable{
 
         //update current metrics
         for (Sample sample : element.getSamples()) {
-            Double val = sample.getVal();
-            Metric metric = ZorkaStatsDataStorage.metrics.get(sample.getMetricId());
-            //adjust val to convert counters to gauges
-            if (metric != null) {
-                if (metric.getType().equals("COUNTER")) {
-                    Sample oldSample = ZorkaStatsDataStorage.historicalSamples.get(sample.getMetricId());
-                    if (oldSample != null) {
-                        val = val - oldSample.getVal();
+            if (sample != null) {
+                Double val = sample.getVal();
+                if (val != null) {
+                    Metric metric = ZorkaStatsDataStorage.metrics.get(sample.getMetricId());
+                    //adjust val to convert counters to gauges
+                    if (metric != null) {
+                        if (metric.getType().equals("COUNTER")) {
+                            Sample oldSample = ZorkaStatsDataStorage.historicalSamples.get(sample.getMetricId());
+                            if (oldSample != null) {
+                                val = val - oldSample.getVal();
+                            }
+                            //set historical sample data to keep track of counters
+                            ZorkaStatsDataStorage.historicalSamples.put(sample.getMetricId(), sample);
+                        }
                     }
-                    //set historical sample data to keep track of counters
-                    ZorkaStatsDataStorage.historicalSamples.put(sample.getMetricId(), sample);
-                }
-            }
-            //if we don't have a sample yet
-            Sample newSample;
-            if (!ZorkaStatsDataStorage.currentSamples.containsKey(sample.getMetricId())) {
-                try {
-                    newSample = (Sample) sample.clone();
-                    newSample.setAvg(val);
-                    newSample.setCnt(1.0);
-                    newSample.setMax(val);
-                    newSample.setMin(val);
-                    newSample.setSum(val);
-                    newSample.setVal(null);
-                    ZorkaStatsDataStorage.currentSamples.put(newSample.getMetricId(), newSample);
-                } catch (CloneNotSupportedException ex) {
-                    Logger.getLogger(ZorkaStatsCollectTask.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    //if we don't have a sample yet
+                    Sample newSample;
+                    if (!ZorkaStatsDataStorage.currentSamples.containsKey(sample.getMetricId())) {
+                        try {
+                            newSample = (Sample) sample.clone();
+                            newSample.setAvg(val);
+                            newSample.setCnt(1.0);
+                            newSample.setMax(val);
+                            newSample.setMin(val);
+                            newSample.setSum(val);
+                            newSample.setVal(null);
+                            ZorkaStatsDataStorage.currentSamples.put(newSample.getMetricId(), newSample);
+                        } catch (CloneNotSupportedException ex) {
+                            log.error(ZorkaLogger.ZAG_ERRORS, "could not clone sample " + sample.getMetricId());
+                        }
 
-            } //if we already have a sample
-            else {
-                newSample = ZorkaStatsDataStorage.currentSamples.get(sample.getMetricId());
-                newSample.setAvg((newSample.getAvg() * newSample.getCnt() + val) / (newSample.getCnt() + 1));
-                newSample.setSum(newSample.getSum() + val);
-                if (val < newSample.getMin()) {
-                    newSample.setMin(val);
+                    } //if we already have a sample
+                    else {
+                        newSample = ZorkaStatsDataStorage.currentSamples.get(sample.getMetricId());
+                        newSample.setAvg((newSample.getAvg() * newSample.getCnt() + val) / (newSample.getCnt() + 1));
+                        newSample.setSum(newSample.getSum() + val);
+                        if (val < newSample.getMin()) {
+                            newSample.setMin(val);
+                        }
+                        if (val > newSample.getMax()) {
+                            newSample.setMax(val);
+                        }
+                        newSample.setCnt(newSample.getCnt() + 1);
+                        newSample.setVal(null);
+                    }
                 }
-                if (val > newSample.getMax()) {
-                    newSample.setMax(val);
-                }
-                newSample.setCnt(newSample.getCnt() + 1);
-                newSample.setVal(null);
             }
         }
     }
-    
+
 }
