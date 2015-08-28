@@ -23,6 +23,10 @@ public class Element {
         attributes.add(Attribute.createAttribute(name, value));
     }
 
+    public void setMetrics(Set<Metric> metrics) {
+        this.metrics = metrics;
+    }
+
     public void addTag(String name, String value) {
         tags.add(Tag.createTag(name, value));
     }
@@ -89,4 +93,10 @@ public class Element {
     public Set<Sample> getSamples() {
         return samples;
     }
+    
+    public void setSamples(Set<Sample> samples){
+        this.samples = samples;
+    }
+    
+    
 }
