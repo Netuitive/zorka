@@ -1,3 +1,9 @@
+Zorka 1.0.13 (2015-09-02)
+-------------------------
+
+* Data uploaded to netuitive is now in a multiple statistic format. 
+
+
 Zorka 1.0.12 (2015-03-01)
 -------------------------
 
