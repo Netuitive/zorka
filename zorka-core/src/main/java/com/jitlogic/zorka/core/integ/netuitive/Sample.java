@@ -1,8 +1,5 @@
 package com.jitlogic.zorka.core.integ.netuitive;
 
-import java.util.Objects;
-
-
 public class Sample implements Cloneable{
     private String metricId;
 
@@ -136,14 +133,18 @@ public class Sample implements Cloneable{
     public int hashCode() {
         int result = metricId.hashCode();
         result = 31 * result + timestamp.hashCode();
-        result = 31 * result + Objects.hashCode(val);
+        result = 31 * result + objectHashCode(val);
         result = 31 * result + timestamp.hashCode();
-        result = 31 * result + Objects.hashCode(avg);
-        result = 31 * result + Objects.hashCode(cnt);
-        result = 31 * result + Objects.hashCode(max);
-        result = 31 * result + Objects.hashCode(min);
-        result = 31 * result + Objects.hashCode(sum);
+        result = 31 * result + objectHashCode(avg);
+        result = 31 * result + objectHashCode(cnt);
+        result = 31 * result + objectHashCode(max);
+        result = 31 * result + objectHashCode(min);
+        result = 31 * result + objectHashCode(sum);
         return result;
+    }
+    //1.6 support
+    private static int objectHashCode(Object o) {
+        return o != null ? o.hashCode() : 0;
     }
     
     @Override
