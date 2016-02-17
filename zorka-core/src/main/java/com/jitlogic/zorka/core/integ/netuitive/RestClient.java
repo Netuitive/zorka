@@ -1,5 +1,6 @@
 package com.jitlogic.zorka.core.integ.netuitive;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -15,15 +16,21 @@ public class RestClient {
     private final String apiKey;
     private final HttpClient httpClient;
 
-    public RestClient(String baseUrl, String apiKey, int socketTimeout, int connectTimeout, int connectionRequestTimeout) {
+    public RestClient(String baseUrl, String apiKey, int socketTimeout, int connectTimeout, int connectionRequestTimeout, String proxyAddress) {
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
-        RequestConfig requestConfig = RequestConfig.copy(RequestConfig.DEFAULT)
+
+        RequestConfig.Builder builder = RequestConfig.copy(RequestConfig.DEFAULT)
                 .setSocketTimeout(socketTimeout)
                 .setConnectTimeout(connectTimeout)
-                .setConnectionRequestTimeout(connectionRequestTimeout)
-                .build();
-        httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+                .setConnectionRequestTimeout(connectionRequestTimeout);
+
+        if (proxyAddress != null) {
+            HttpHost proxy = HttpHost.create(proxyAddress);
+            builder.setProxy(proxy);
+        }
+
+        httpClient = HttpClientBuilder.create().setDefaultRequestConfig(builder.build()).build();
     }
 
     public RestResponse post(String content) {
