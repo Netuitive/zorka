@@ -1,3 +1,7 @@
+Zorka 1.0.15 (2016-02-16)
+-------------------------
+* http proxy support of posting payload to Netuitive cloud api.
+
 Zorka 1.0.14 (2015-11-05)
 -------------------------
 *Java 6 support

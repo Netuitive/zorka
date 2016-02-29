@@ -48,12 +48,15 @@ public class ZorkaStatsReporter implements ZorkaService {
         Integer socketTimeout = config.intCfg("netuitive.api.http.socketTimeout", 5000);
         Integer connectTimeout = config.intCfg("netuitive.api.http.connectTimeout", 5000);
         Integer connectionRequesTimeout = config.intCfg("netuitive.api.http.connectionRequestTimeout", 5000);
+        Boolean isProxy = config.boolCfg("netuitive.api.proxy", false);
+        String proxyAddress = isProxy ? config.stringCfg("netuitive.api.proxy.address", null) : null;
         this.restClient = new RestClient(
                 config.stringCfg("netuitive.api.url", "http://localhost:8000"),
                 config.stringCfg("netuitive.api.key", "433f1b264dead28fa093e3676728939e"),
                 socketTimeout,
                 connectTimeout,
-                connectionRequesTimeout);
+                connectionRequesTimeout,
+                proxyAddress);
         this.interval = config.longCfg("netuitive.api.interval", 60L);
         this.sendTask = new ZorkaStatsSendTask(config, zorka, restClient);
         this.collectTask = new ZorkaStatsCollectTask(config, zorka);
