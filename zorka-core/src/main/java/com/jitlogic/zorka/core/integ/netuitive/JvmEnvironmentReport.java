@@ -6,7 +6,7 @@ import com.jitlogic.zorka.common.util.ZorkaLogger;
 import com.jitlogic.zorka.common.util.ZorkaUtil;
 import com.jitlogic.zorka.core.ZorkaLib;
 
-import java.util.List;
+import java.net.InetAddress;
 
 /**
  * This class is used to gather static JVM settings as Element.attributes
@@ -56,6 +56,15 @@ public class JvmEnvironmentReport extends AbstractStatsReport {
             addAttribute("heap.initial", initHeapSize);
             Long maxHeapSize = (Long) zorka.jmx(_mbs, _memmbean, "HeapMemoryUsage", "max");
             addAttribute("heap.max", maxHeapSize);
+
+            //host name & ip
+            String host = config.stringCfg("zorka.hostname", "localhost");
+            addAttribute("host", host);
+            addRelationship(host);
+            String ip = getIpFromHost(host);
+            if (ip != null) {
+                addAttribute("ip", ip);
+            }
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting environment stats");
         } catch (Exception e) {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished collecting environment stats with error: ", e);
@@ -63,7 +72,22 @@ public class JvmEnvironmentReport extends AbstractStatsReport {
         return elementBuilder.build();
     }
 
+    private String getIpFromHost(String host) {
+        String ip = null;
+        try {
+            InetAddress inetAddress = InetAddress.getByName(host);
+            ip = inetAddress.getHostAddress();
+        } catch (Exception e) {
+            log.warn(ZorkaLogger.ZAG_WARNINGS, "unable to get InetAddress from host: " + host);
+        }
+        return ip;
+    }
+
     private void addAttribute(String name, Object value) {
         elementBuilder.attribute(name, value);
+    }
+
+    private void addRelationship(String host) {
+        elementBuilder.relation(host);
     }
 }

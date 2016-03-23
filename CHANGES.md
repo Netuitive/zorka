@@ -1,3 +1,7 @@
+Zorka 1.0.16 (2016-03-23)
+-------------------------
+* add host/ip attributes and relation to host
+
 Zorka 1.0.15 (2016-02-16)
 -------------------------
 * http proxy support of posting payload to Netuitive cloud api.
