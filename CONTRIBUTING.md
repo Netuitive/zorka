@@ -28,7 +28,7 @@ With your feature, please include:
 - A detailed commit message
  
 ### Writing Documentation
-The Netuitive Event Handler can always use documentation (more documentation is always better!). 
+The Netuitive Java Agent can always use documentation (more documentation is always better!). 
 Please document your features or usage as part of the official docs, in docstrings, 
 in blog posts, articles, or wherever you see fit.
  
