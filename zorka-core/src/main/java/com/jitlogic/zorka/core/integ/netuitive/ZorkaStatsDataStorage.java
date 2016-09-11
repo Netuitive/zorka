@@ -8,9 +8,11 @@ import java.util.Set;
 public class ZorkaStatsDataStorage {
     public static volatile Element systemStats = null;
     public static volatile Element methodStats = null;
+    public static volatile Element customStats = null;
     public static volatile Map<String, Sample> currentSamples = null;
     public static volatile Map<String, Sample> historicalSamples = null;
     public static volatile Map<String, Metric> metrics = null;
+    public static volatile Map<String, ComputedMetric> computedMetrics = new HashMap<String, ComputedMetric>();
     
     public static void newInterval(){
         if (historicalSamples == null) {
@@ -23,6 +25,9 @@ public class ZorkaStatsDataStorage {
         }
         if(methodStats != null){
             methodStats.clearMetricsAndSamples();
+        }
+        if(customStats != null){
+            customStats.clearMetricsAndSamples();
         }
     }
     
@@ -39,8 +44,12 @@ public class ZorkaStatsDataStorage {
         if (systemStats != null) {
             e = systemStats;
             e.merge(methodStats);
+            e.merge(customStats);
         } else if (methodStats != null) {
             e = methodStats;
+            e.merge(customStats);
+        } else if (customStats != null) {
+            e = customStats;
         }
         if (e != null) {
             e.setSamples(samples);

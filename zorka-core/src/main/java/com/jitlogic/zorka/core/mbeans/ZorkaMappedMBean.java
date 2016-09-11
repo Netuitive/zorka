@@ -40,6 +40,7 @@ import javax.management.openmbean.TabularType;
 import com.jitlogic.zorka.common.stats.ValGetter;
 import com.jitlogic.zorka.common.util.ZorkaLogger;
 import com.jitlogic.zorka.common.util.ZorkaLog;
+import java.util.Map;
 
 
 /**
@@ -62,7 +63,7 @@ public class ZorkaMappedMBean implements DynamicMBean {
     /**
      * Attributes
      */
-    private ConcurrentHashMap<String, Attribute> attrs = new ConcurrentHashMap<String, Attribute>();
+    private Map<String, Attribute> attrs = new ConcurrentHashMap<String, Attribute>();
 
     /**
      * If true, mbean info will be rebuilt at nearest occasion.
@@ -81,6 +82,7 @@ public class ZorkaMappedMBean implements DynamicMBean {
      */
     public ZorkaMappedMBean(String description) {
         this.description = description;
+        refreshMBeanInfo();
     }
 
     @Override

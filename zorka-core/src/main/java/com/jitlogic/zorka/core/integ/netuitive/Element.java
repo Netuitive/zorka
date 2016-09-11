@@ -38,6 +38,10 @@ public class Element {
     public void addMetric(String id) {
         metrics.add(Metric.createMetric(id));
     }
+    
+    public void addMetric(Metric metric) {
+        metrics.add(metric);
+    }
 
     public void addMetric(String id, String name, String type, String unit) {
         metrics.add(Metric.createMetric(id, name, type, unit));
@@ -45,6 +49,10 @@ public class Element {
 
     public void addSample(String metricId, Long timestamp, Double val) {
         samples.add(Sample.createSample(metricId, timestamp, val));
+    }
+    
+    public void addSample(Sample sample) {
+        samples.add(sample);
     }
 
     public void merge(Element e) {

@@ -14,12 +14,14 @@ public class ZorkaStatsCollectTask implements Runnable{
     
     private final JvmSystemStatsReport systemStatsReport;
     private final JvmMethodCallStatsReport methodCallStatsReport;
+    private final CustomMBeanStatsReport customStatsReport;
     
     public ZorkaStatsCollectTask(
             ZorkaConfig config,
             ZorkaLib zorka){
         this.systemStatsReport = new JvmSystemStatsReport(config, zorka);
         this.methodCallStatsReport = new JvmMethodCallStatsReport(config, zorka);
+        this.customStatsReport = new CustomMBeanStatsReport(config, zorka);
     }
 
     @Override
@@ -28,7 +30,11 @@ public class ZorkaStatsCollectTask implements Runnable{
         synchronized(ZorkaStatsDataStorage.class){
             log.debug(ZorkaLogger.ZPM_DEBUG, "start collecting zorka stats");
             Long start = System.currentTimeMillis();
-            processElements();
+            try {
+                processElements();
+            } catch (Exception e) {
+                log.error(ZorkaLogger.ZAG_ERRORS, "%serror collecting: ", e, "");
+            }
             Long finish = System.currentTimeMillis();
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting zorka stats using %d ms", finish - start);
         }
@@ -37,18 +43,27 @@ public class ZorkaStatsCollectTask implements Runnable{
     
     private void processElements(){
         
+        Long timestamp = System.currentTimeMillis();
+        
         //system
-        Element curSystemStats = systemStatsReport.collect(System.currentTimeMillis());
+        Element curSystemStats = systemStatsReport.collect(timestamp);
         if(curSystemStats != null){
             ZorkaStatsDataStorage.systemStats = curSystemStats;
             processElement(curSystemStats);
         }
         
         //methods
-        Element curMethodStats = methodCallStatsReport.collect(System.currentTimeMillis());
+        Element curMethodStats = methodCallStatsReport.collect(timestamp);
         if(curSystemStats != null){
             ZorkaStatsDataStorage.methodStats = curMethodStats;
             processElement(curMethodStats);
+        }
+        
+        //custom
+        Element curCustomStats = customStatsReport.collect(timestamp);
+        if(curCustomStats != null){
+            ZorkaStatsDataStorage.customStats = curCustomStats;
+            processElement(curCustomStats);
         }
         
     }

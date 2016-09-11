@@ -36,6 +36,7 @@ import com.jitlogic.zorka.core.mbeans.MBeanServerRegistry;
 import com.jitlogic.zorka.core.perfmon.*;
 import com.jitlogic.zorka.core.mbeans.AttrGetter;
 import com.jitlogic.zorka.common.stats.ValGetter;
+import com.jitlogic.zorka.core.mbeans.BshGetter;
 import com.jitlogic.zorka.core.mbeans.ZorkaMappedMBean;
 
 
@@ -431,6 +432,9 @@ public class ZorkaLib implements ZorkaService {
      * @return
      */
     public ValGetter getter(Object obj, Object... attrs) {
+        if(obj instanceof bsh.This){
+            return new BshGetter(obj, attrs);
+        }
         return new AttrGetter(obj, attrs);
     }
 

@@ -30,12 +30,12 @@ public class AttrGetter implements ValGetter {
     /**
      * This object attribute will be presented.
      */
-    private Object obj;
+    protected Object obj;
 
     /**
      * Attribute chain
      */
-    private Object[] attrs;
+    protected Object[] attrs;
 
 
     /**

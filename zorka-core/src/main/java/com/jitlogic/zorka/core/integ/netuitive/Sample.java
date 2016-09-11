@@ -104,6 +104,10 @@ public class Sample implements Cloneable{
         return val;
     }
 
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

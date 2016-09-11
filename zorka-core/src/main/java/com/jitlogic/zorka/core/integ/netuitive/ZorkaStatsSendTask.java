@@ -15,6 +15,7 @@ public class ZorkaStatsSendTask implements Runnable {
     private final RestClient restClient;
     private final JSONWriter jsonWriter;
     private final JvmEnvironmentReport environmentReport;
+    private final ComputedStatsReport computedStatsReport;
     private static final String TYPE_COUNTER_JSON = "\"type\":\"COUNTER\"";
     private static final String TYPE_GAUGE_JSON = "\"type\":\"GAUGE\"";
     Element e = null;
@@ -26,7 +27,7 @@ public class ZorkaStatsSendTask implements Runnable {
         this.restClient = restClient;
         this.jsonWriter = new JSONWriter(false);
         this.environmentReport = new JvmEnvironmentReport(config, zorka);
-        
+        this.computedStatsReport = new ComputedStatsReport(config, zorka);
     }
     
     private void intervalCleanUp() {
@@ -43,7 +44,9 @@ public class ZorkaStatsSendTask implements Runnable {
             log.debug(ZorkaLogger.ZPM_DEBUG, "start reporting zorka stats");
             Long start = System.currentTimeMillis();
             try {
-                e = this.environmentReport.collect(System.currentTimeMillis());
+                Long timestamp = System.currentTimeMillis();
+                e = this.environmentReport.collect(timestamp);
+                e.merge(computedStatsReport.collect(timestamp));
                 if (e != null) {
                     e.merge(ZorkaStatsDataStorage.prepareForExport());
                     if (e.getSamples().size() > 0) {

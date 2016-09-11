@@ -26,6 +26,11 @@ public class ElementBuilder {
         element.addMetric(id);
         return this;
     }
+    
+    public ElementBuilder metric(Metric metric) {
+        element.addMetric(metric);
+        return this;
+    }
 
     public ElementBuilder metric(String id, String name, String type, String unit) {
         element.addMetric(id, name, type, unit);
@@ -34,6 +39,11 @@ public class ElementBuilder {
 
     public ElementBuilder sample(String metricId, Long timestamp, Double val) {
         element.addSample(metricId, timestamp, val);
+        return this;
+    }
+    
+    public ElementBuilder sample(Sample sample) {
+        element.addSample(sample);
         return this;
     }
 

@@ -17,6 +17,9 @@
 
 package com.jitlogic.zorka.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
@@ -78,6 +81,29 @@ public class JmxObject {
 
         return ret;
 	}
+        
+    
+    public Map<String, Object> getAll() {
+        ClassLoader cl0 = null;
+        Map<String, Object> ret = new HashMap<String, Object>();
+        try {
+            if (classLoader != null) {
+                cl0 = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
+            for(MBeanAttributeInfo info : conn.getMBeanInfo(name).getAttributes()){
+                ret.put(info.getName(), conn.getAttribute(name, info.getName()));
+            }
+        } catch (Exception e) {
+            return ret;
+        } finally {
+            if (cl0 != null) {
+                Thread.currentThread().setContextClassLoader(cl0);
+            }
+        }
+
+        return ret;
+    }
 
 
     /**
