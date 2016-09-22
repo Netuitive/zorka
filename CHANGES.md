@@ -1,3 +1,7 @@
+Zorka 1.0.17 (2016-09-11)
+-------------------------
+* custom mbean metric support
+
 Zorka 1.0.16 (2016-03-23)
 -------------------------
 * add host/ip attributes and relation to host

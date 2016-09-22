@@ -16,6 +16,7 @@
 
 package com.jitlogic.zorka.common.tracedata;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,17 +25,17 @@ import java.util.Map;
 public class RawDataMetric extends Metric {
 
 
-    public RawDataMetric(int id, String name, Map<String, Object> attrs) {
-        super(id, name, attrs);
+    public RawDataMetric(int id, String name, String description, HashMap<String, Object> attrs) {
+        super(id, name, description, attrs);
     }
 
-    public RawDataMetric(int id, int templateId, String name, Map<String, Object> attrs) {
-        super(id, templateId, name, attrs);
+    public RawDataMetric(int id, int templateId, String name, String description, HashMap<String, Object> attrs) {
+        super(id, templateId, name, description, attrs);
     }
 
 
-    public RawDataMetric(MetricTemplate template, String name, Map<String, Object> attrs) {
-        super(template, name, attrs);
+    public RawDataMetric(MetricTemplate template, String name, String description, HashMap<String, Object> attrs) {
+        super(template, name, description, attrs);
     }
 
 
