@@ -5,7 +5,7 @@
     <parent>
         <artifactId>zorka</artifactId>
         <groupId>com.jitlogic.zorka</groupId>
-        <version>1.0.12</version>
+        <version>1.0.17</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,28 +27,34 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <mkdir dir="${project.build.outputDirectory}/zorka-${project.version}"/>
-                                <mkdir dir="${project.build.outputDirectory}/zorka-${project.version}/log"/>
+                                <mkdir dir="${project.build.outputDirectory}/netuitive-zorka-${project.version}"/>
+                                <mkdir dir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/log"/>
                                 <copy file="../zorka-agent/target/zorka-agent-${project.version}.jar"
-                                      toFile="${project.build.outputDirectory}/zorka-${project.version}/zorka.jar"/>
+                                      toFile="${project.build.outputDirectory}/netuitive-zorka-${project.version}/netuitive.jar"/>
                                 <copy file="../COPYING"
-                                      toDir="${project.build.outputDirectory}/zorka-${project.version}"/>
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}"/>
                                 <copy file="src/zorka.properties"
-                                      toDir="${project.build.outputDirectory}/zorka-${project.version}"/>
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}"/>
                                 <copy file="../README.md"
-                                      toDir="${project.build.outputDirectory}/zorka-${project.version}"/>
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}"/>
                                 <copy file="../CHANGES.md"
-                                      toDir="${project.build.outputDirectory}/zorka-${project.version}"/>
-                                <mkdir dir="${project.build.outputDirectory}zorka-${project.version}/scripts"/>
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}"/>
+                                <mkdir dir="${project.build.outputDirectory}netuitive-zorka-${project.version}/scripts"/>
                                 <copy file="src/sample.bsh"
-                                      toDir="${project.build.outputDirectory}/zorka-${project.version}/scripts"/>
-                                <mkdir dir="${project.build.outputDirectory}/zorka-${project.version}/templates"/>
-                                <copy toDir="${project.build.outputDirectory}/zorka-${project.version}/templates">
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/scripts"/>
+                                <copy file="../zorka-core-test/target/zorka-core-test-${project.version}.jar"
+                                      toFile="${project.build.outputDirectory}/netuitive-zorka-${project.version}/zorka-core-test.jar"/>
+                                <copy file="../zorka-core-test/target/classes/scripts/calculator.bsh"
+                                      toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/scripts"/>
+                                <copy file="../zorka-viewer/target/zorka-viewer-${project.version}.jar"
+                                      toFile="${project.build.outputDirectory}/netuitive-zorka-${project.version}/zorka-viewer.jar"/>
+                                <mkdir dir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/templates"/>
+                                <copy toDir="${project.build.outputDirectory}/netuitive-zorka-${project.version}/templates">
                                     <fileset dir="${project.basedir}/src/templates" defaultexcludes="false">
                                         <include name="**"/>
                                     </fileset>
                                 </copy>
-                                <zip destfile="${project.build.directory}/zorka-${project.version}.zip">
+                                <zip destfile="${project.build.directory}/netuitive-zorka-${project.version}.zip">
                                     <fileset dir="${project.build.outputDirectory}" defaultexcludes="false">
                                         <include name="**"/>
                                     </fileset>

@@ -3,7 +3,7 @@
     <groupId>com.jitlogic.zorka</groupId>
     <artifactId>zorka</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.12</version>
+    <version>1.0.17</version>
     <name>zorka: parent aggregator</name>
     <url>http://zorka.io</url>
 
@@ -16,10 +16,13 @@
         <dependency.plugin.version>2.3</dependency.plugin.version>
         <jar.plugin.version>2.4</jar.plugin.version>
         <jarjar.plugin.version>1.7</jarjar.plugin.version>
+        <pitest.plugin.version>1.1.5</pitest.plugin.version>
+        <sonar.plugin.version>2.5</sonar.plugin.version>
         <source.plugin.version>2.1.2</source.plugin.version>
         <surefire.plugin.version>2.12</surefire.plugin.version>
         <war.plugin.version>2.1.1</war.plugin.version>
 
+        <apache.http.version>4.4</apache.http.version>
         <asm.version>5.0.3</asm.version>
         <bval.version>0.5</bval.version>
         <dbcp.version>1.4</dbcp.version>
@@ -41,6 +44,18 @@
         <zoola.version>0.1.0</zoola.version>
     </properties>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <repositories>
         <repository>
             <id>zorka-repo</id>
@@ -53,6 +68,7 @@
         <module>zorka-common</module>
         <module>zorka-common-test</module>
         <module>zorka-core</module>
+        <module>zorka-core-test</module>
         <module>zorka-agent</module>
         <module>zorka-viewer</module>
         <module>zorka-dist</module>

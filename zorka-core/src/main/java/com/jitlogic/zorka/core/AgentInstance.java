@@ -23,6 +23,7 @@ import com.jitlogic.zorka.common.stats.ValGetter;
 import com.jitlogic.zorka.common.util.ZorkaLog;
 import com.jitlogic.zorka.common.util.ZorkaLogger;
 import com.jitlogic.zorka.common.util.ZorkaUtil;
+import com.jitlogic.zorka.core.integ.netuitive.ZorkaStatsReporter;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixActiveAgent;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixAgent;
 import com.jitlogic.zorka.core.integ.zabbix.ZabbixLib;
@@ -143,6 +144,11 @@ public class AgentInstance implements ZorkaService {
      */
     private PerfMonLib perfMonLib;
 
+    /**
+     * Reference to zorka stats reporter
+     */
+    private ZorkaStatsReporter reporter;
+
     private MethodCallStatistics stats = new MethodCallStatistics();
 
     /**
@@ -180,6 +186,10 @@ public class AgentInstance implements ZorkaService {
 
         zorkaAgent.initialize();
 
+        if (config.boolCfg("netuitive.api", true)) {
+            getReporter().start();
+        }
+
         if (config.boolCfg("zorka.diagnostics", true)) {
             createZorkaDiagMBean();
         }
@@ -206,7 +216,7 @@ public class AgentInstance implements ZorkaService {
             zorkaAgent.put("zabbix.active", getZabbixLib());
         }
         
-        if (config.boolCfg("zabbix", true)) {
+        if (config.boolCfg("zabbix", false)) {
             log.info(ZorkaLogger.ZAG_CONFIG, "Enabling ZABBIX subsystem ...");
             getZabbixAgent().start();
             zorkaAgent.put("zabbix", getZabbixLib());
@@ -516,6 +526,18 @@ public class AgentInstance implements ZorkaService {
         return perfMonLib;
     }
 
+    /**
+     * Returns reference to zorka stats reporter
+     *
+     * @return instance of zorka stats reporter
+     */
+    public synchronized ZorkaStatsReporter getReporter() {
+        if (reporter == null) {
+            reporter = new ZorkaStatsReporter(getConfig(), getScheduledExecutor(), getZorkaLib());
+        }
+        return reporter;
+    }
+
 
     /**
      * Returns reference to mbean server registry.
@@ -538,7 +560,7 @@ public class AgentInstance implements ZorkaService {
         log.info(ZorkaLogger.ZAG_CONFIG, "Shutting down agent ...");
 
         tracer.clearMatchers();
-        tracer.clearOutputs();
+        tracer.shutdown();
 
         if (zorkaLib != null) {
             zorkaLib.shutdown();
@@ -567,6 +589,10 @@ public class AgentInstance implements ZorkaService {
         if (nagiosAgent != null) {
             nagiosAgent.shutdown();
         }
+
+        if (reporter != null) {
+            reporter.shutdown();
+        }
     }
 
 
@@ -577,7 +603,7 @@ public class AgentInstance implements ZorkaService {
         config.initLoggers();
         log.info(ZorkaLogger.ZAG_CONFIG, "Agent configuration reloaded ...");
 
-        if (config.boolCfg("zabbix", true)) {
+        if (config.boolCfg("zabbix", false)) {
             getZabbixAgent().restart();
         }
 
@@ -585,7 +611,7 @@ public class AgentInstance implements ZorkaService {
             getZabbixActiveAgent().restart();
         }
         
-        if (config.boolCfg("nagios", true)) {
+        if (config.boolCfg("nagios", false)) {
             getNagiosAgent().restart();
         }
 
@@ -596,7 +622,9 @@ public class AgentInstance implements ZorkaService {
         log.info(ZorkaLogger.ZAG_CONFIG, "Agent configuration scripts executed (" + l + " errors).");
         log.info(ZorkaLogger.ZAG_CONFIG, "Number of matchers in tracer configuration: "
                 + tracer.getMatcherSet().getMatchers().size());
-
+        if (config.boolCfg("netuitive.api", true)) {
+            getReporter().restart();
+        }
 
     }
 

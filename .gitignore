@@ -5,3 +5,5 @@ target
 .project
 .idea
 /leiame.txt
+/out
+pom.xml.versionsBackup

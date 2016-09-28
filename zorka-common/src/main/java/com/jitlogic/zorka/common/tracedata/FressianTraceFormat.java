@@ -28,10 +28,7 @@ import org.fressian.impl.InheritanceLookup;
 import org.fressian.impl.MapLookup;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class contains Fressian handlers for Zorka Trace Format. This data format
@@ -129,12 +126,20 @@ public class FressianTraceFormat {
      * builder implementation and assign it to this variable in order to change this
      * data type.
      */
-    public static TraceRecordBuilder TRACE_RECORD_BUILDER = new TraceRecordBuilder() {
+    private static TraceRecordBuilder traceRecordBuilder = new TraceRecordBuilder() {
         @Override
         public TraceRecord get() {
             return new TraceRecord(null);
         }
     };
+
+    public static void setTraceRecordBuilder(TraceRecordBuilder builder) {
+        traceRecordBuilder = builder;
+    }
+
+    public static TraceRecordBuilder getTraceRecordBuilder() {
+        return traceRecordBuilder;
+    }
 
 
     /**
@@ -143,7 +148,7 @@ public class FressianTraceFormat {
     private static final ReadHandler RECORD_RH = new ReadHandler() {
         @Override
         public Object read(Reader r, Object tag, int componentCount) throws IOException {
-            TraceRecord tr = TRACE_RECORD_BUILDER.get();
+            TraceRecord tr = traceRecordBuilder.get();
             tr.setClassId((int) r.readInt());
             tr.setMethodId((int) r.readInt());
             tr.setSignatureId((int) r.readInt());
@@ -190,6 +195,7 @@ public class FressianTraceFormat {
             w.writeInt(m.getTemplate().getType());
             w.writeInt(m.getTemplateId());
             w.writeString(m.getName());
+            w.writeString(m.getDescription());
             w.writeObject(m.getAttrs());
         }
     };
@@ -205,20 +211,22 @@ public class FressianTraceFormat {
             int type = (int) r.readInt();
             int templateId = (int) r.readInt();
             String name = (String) r.readObject();
+            String description = (String) r.readObject();
 
-            Map<String, Object> attrs = (Map<String, Object>) r.readObject();
+
+            HashMap<String, Object> attrs = (HashMap<String, Object>) r.readObject();
 
             switch (type) {
                 case MetricTemplate.RAW_DATA:
-                    return new RawDataMetric(id, templateId, name, attrs);
+                    return new RawDataMetric(id, templateId, name, description, attrs);
                 case MetricTemplate.RAW_DELTA:
-                    return new RawDeltaMetric(id, templateId, name, attrs);
+                    return new RawDeltaMetric(id, templateId, name, description, attrs);
                 case MetricTemplate.TIMED_DELTA:
-                    return new TimedDeltaMetric(id, templateId, name, attrs);
+                    return new TimedDeltaMetric(id, templateId, name, description, attrs);
                 case MetricTemplate.UTILIZATION:
-                    return new UtilizationMetric(id, templateId, name, attrs);
+                    return new UtilizationMetric(id, templateId, name, description, attrs);
                 case MetricTemplate.WINDOWED_RATE:
-                    return new WindowedRateMetric(id, templateId, name, attrs);
+                    return new WindowedRateMetric(id, templateId, name, description, attrs);
             }
 
             return null;
@@ -239,6 +247,7 @@ public class FressianTraceFormat {
             w.writeInt(t.getId());
             w.writeInt(t.getType());
             w.writeString(t.getName());
+            w.writeString(t.getDescription());
             w.writeString(t.getUnits());
             w.writeString(t.getNomField());
             w.writeString(t.getDivField());
@@ -255,12 +264,13 @@ public class FressianTraceFormat {
         @Override
         public Object read(Reader r, Object tag, int componentCount) throws IOException {
             MetricTemplate mt = new MetricTemplate(
-                    (int) r.readInt(),        // id
-                    (int) r.readInt(),        // type
-                    (String) r.readObject(),  // name
-                    (String) r.readObject(),  // units
-                    (String) r.readObject(),  // nomField
-                    (String) r.readObject()); // divField
+                (int) r.readInt(),        // id
+                (int) r.readInt(),        // type
+                (String) r.readObject(),  // name
+                (String) r.readObject(),  // description
+                (String) r.readObject(),  // units
+                (String) r.readObject(),  // nomField
+                (String) r.readObject()); // divField
 
             return mt.multiply(r.readDouble())
                     .dynamicAttrs((Set<String>) r.readObject());
@@ -305,7 +315,7 @@ public class FressianTraceFormat {
     /**
      * SymbolicException write handler
      */
-    public static WriteHandler EXCEPTION_WH = new WriteHandler() {
+    public static final WriteHandler EXCEPTION_WH = new WriteHandler() {
         @Override
         public void write(Writer w, Object instance) throws IOException {
             SymbolicException e = (SymbolicException) instance;
@@ -323,7 +333,7 @@ public class FressianTraceFormat {
     /**
      * SymbolicException read handler
      */
-    public static ReadHandler EXCEPTION_RH = new ReadHandler() {
+    public static final ReadHandler EXCEPTION_RH = new ReadHandler() {
         @Override
         public Object read(Reader r, Object tag, int componentCount) throws IOException {
             return new SymbolicException(
@@ -470,7 +480,7 @@ public class FressianTraceFormat {
     /**
      * Lookup object grouping all write handlers
      */
-    public static ILookup<Class, Map<String, WriteHandler>> WRITE_LOOKUP =
+    public static final ILookup<Class, Map<String, WriteHandler>> WRITE_LOOKUP =
             new ChainedLookup<Class, Map<String, WriteHandler>>(
 
                     // Default handlers
@@ -506,7 +516,7 @@ public class FressianTraceFormat {
     /**
      * Lookup object grouping all read handlers
      */
-    public static ILookup<Object, ReadHandler> READ_LOOKUP =
+    public static final ILookup<Object, ReadHandler> READ_LOOKUP =
             new MapLookup<Object, ReadHandler>(
                     ZorkaUtil.<Object, ReadHandler>constMap(
                             SYMBOL_TAG, SYMBOL_RH,

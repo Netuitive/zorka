@@ -1,3 +1,25 @@
+Zorka 1.0.17 (2016-09-11)
+-------------------------
+* custom mbean metric support
+
+Zorka 1.0.16 (2016-03-23)
+-------------------------
+* add host/ip attributes and relation to host
+
+Zorka 1.0.15 (2016-02-16)
+-------------------------
+* http proxy support of posting payload to Netuitive cloud api.
+
+Zorka 1.0.14 (2015-11-05)
+-------------------------
+*Java 6 support
+
+Zorka 1.0.13 (2015-09-02)
+-------------------------
+
+* Data uploaded to netuitive is now in a multiple statistic format. 
+
+
 Zorka 1.0.12 (2015-03-01)
 -------------------------
 

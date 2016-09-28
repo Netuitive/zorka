@@ -17,6 +17,7 @@
 
 package com.jitlogic.zorka.common.stats;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +30,7 @@ public class MethodCallStatistics implements ZorkaStats {
     /**
      * Map of method call statistics objects.
      */
-    private ConcurrentHashMap<String, MethodCallStatistic> stats = new ConcurrentHashMap<String, MethodCallStatistic>();
+    private Map<String, MethodCallStatistic> stats = new ConcurrentHashMap<String, MethodCallStatistic>();
 
     @Override
     public ZorkaStat getStatistic(String statisticName) {
@@ -59,7 +60,8 @@ public class MethodCallStatistics implements ZorkaStats {
         MethodCallStatistic ret = stats.get(name);
 
         if (ret == null) {
-            MethodCallStatistic st = stats.putIfAbsent(name, ret = new MethodCallStatistic(name));
+            ConcurrentHashMap<String, MethodCallStatistic> concurrentStats = (ConcurrentHashMap) stats;
+            MethodCallStatistic st = concurrentStats.putIfAbsent(name, ret = new MethodCallStatistic(name));
             if (st != null) {
                 ret = st;
             }
