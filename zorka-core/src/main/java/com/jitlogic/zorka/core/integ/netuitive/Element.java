@@ -105,6 +105,16 @@ public class Element {
     public void setSamples(Set<Sample> samples){
         this.samples = samples;
     }
-    
-    
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
