@@ -85,7 +85,7 @@ public abstract class ZorkaConfig {
      * @return default configuration properties.
      */
     public static Properties defaultProperties(String path) {
-        Properties props = new Properties();
+        Properties props = new ZorkaProperties();
 
         InputStream is = null;
 
