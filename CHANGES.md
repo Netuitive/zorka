@@ -1,3 +1,8 @@
+Zorka 1.1.0 (2016-09-30)
+-------------------------
+* cluster element support
+* property overriding support
+
 Zorka 1.0.17 (2016-09-11)
 -------------------------
 * custom mbean metric support
