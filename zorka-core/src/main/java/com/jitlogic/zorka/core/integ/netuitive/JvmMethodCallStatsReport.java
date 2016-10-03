@@ -37,7 +37,10 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
                 log.debug(ZorkaLogger.ZPM_DEBUG, "retrieving method call status for mbean=" + objectName + ", attribute=" + attribute);
                 Map<String, MethodCallStatistics> statsMap = zorka.stats("java", objectName, attribute.trim());
                 log.debug(ZorkaLogger.ZPM_DEBUG, "finished retrieving method call status for mbean=" + objectName + ", attribute=" + attribute);
-                Element current = build(statsMap, timestamp);
+                if(statsMap == null){
+                    statsMap = new HashMap<String, MethodCallStatistics>();
+                }
+                Element current = build(statsMap, attribute.trim().toLowerCase(), timestamp);
                 if (e == null) {
                     e = current;
                 } else {
@@ -52,7 +55,7 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
         return e;
     }
 
-    private Element build(Map<String, MethodCallStatistics> statsMap, Long timestamp) {
+    private Element build(Map<String, MethodCallStatistics> statsMap, String attributeName, Long timestamp) {
         log.debug(ZorkaLogger.ZPM_DEBUG, "starting to build method stats element");
         for (Map.Entry<String, MethodCallStatistics> statsEntry : statsMap.entrySet()) {
             String mbean = statsEntry.getKey();
@@ -70,19 +73,19 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
                 log.debug(ZorkaLogger.ZPM_DEBUG, "processing stat: " + statName);
                 MethodCallStatistic stat = stats.getMethodCallStatistic(statName);
                 //calls
-                String callsMetricId = ZorkaUtil.join(".", mbeanShortName, statName, "calls");
+                String callsMetricId = constructMetricName(mbeanShortName, attributeName, statName, "calls");
                 elementBuilder.metric(callsMetricId.toLowerCase(), "Method Calls", "COUNTER", null);
                 elementBuilder.sample(callsMetricId.toLowerCase(), timestamp, (double)stat.getCalls());
                 //errors
-                String errorMetricId = ZorkaUtil.join(".", mbeanShortName, statName, "errors");
+                String errorMetricId = constructMetricName(mbeanShortName, attributeName, statName, "errors");
                 elementBuilder.metric(errorMetricId.toLowerCase(), "Method Errors", "COUNTER", null);
                 elementBuilder.sample(errorMetricId.toLowerCase(), timestamp, (double) stat.getErrors());
                 //time
-                String timeMetricId = ZorkaUtil.join(".", mbeanShortName, statName, "time");
+                String timeMetricId = constructMetricName(mbeanShortName, attributeName, statName, "time");
                 elementBuilder.metric(timeMetricId.toLowerCase(), "Total Method Execution Time", "COUNTER", "ms");
                 elementBuilder.sample(timeMetricId.toLowerCase(), timestamp, (double) stat.getTime());
                 //avg_time
-                String avgTimeMetricId = ZorkaUtil.join(".", mbeanShortName, statName, "avg_time").toLowerCase();
+                String avgTimeMetricId = constructMetricName(mbeanShortName, attributeName, statName, "avg_time").toLowerCase();
                 Metric metric = Metric.createMetric(avgTimeMetricId, "Average Method Execution Time", "GAUGE", "ms");
                 List<String> inputMetrics = new ArrayList<String>(Arrays.asList(callsMetricId.toLowerCase(), timeMetricId.toLowerCase()));
                 ComputedMetric computedMetric = new ComputedMetric(inputMetrics, AverageCallTimeComputedMetric.class, metric);
@@ -93,5 +96,12 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
         }
         log.debug(ZorkaLogger.ZPM_DEBUG, "finished building method stats element");
         return elementBuilder.build();
+    }
+    
+    private String constructMetricName(String mbean, String attribute, String stat, String metric){
+        if(stat == null || stat.isEmpty() || stat.equals("stats") || stat.equals("byTag")){
+            return ZorkaUtil.join(".", mbean, stat, metric);
+        }
+        return ZorkaUtil.join(".", mbean, attribute, stat, metric); 
     }
 }
