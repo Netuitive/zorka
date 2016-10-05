@@ -1,3 +1,7 @@
+Zorka 1.2.0 (2016-10-05)
+-------------------------
+* add custom attribute names to metric naming scheme
+
 Zorka 1.1.0 (2016-09-30)
 -------------------------
 * cluster element support
