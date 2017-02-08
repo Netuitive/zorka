@@ -1,3 +1,7 @@
+Zorka 1.2.1 (2017-02-08)
+-------------------------
+* Add concurrent collector garbage collection support
+
 Zorka 1.2.0 (2016-10-05)
 -------------------------
 * add custom attribute names to metric naming scheme

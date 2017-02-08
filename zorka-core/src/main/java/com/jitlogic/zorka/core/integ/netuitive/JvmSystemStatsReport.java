@@ -115,6 +115,14 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             Long pssCollectionTime = (Long) zorka.jmx(_mbs, _pssmbean, "CollectionTime");
             addMetricSample("gc.psscavenge.collectiontime", "GC PS Scavenge Collection Time", "GAUGE", "ms", timestamp, pssCollectionTime);
 
+            String _parNew = "java.lang:type=GarbageCollector,name=ParNew";
+            Long _parNewTime = (Long) zorka.jmx(_mbs, _parNew, "CollectionTime");
+            addMetricSample("gc.parnew.collectiontime", "GC Par New Collection Time", "GAUGE", "ms", timestamp, _parNewTime);
+
+            String _concurrentMarkSweep = "java.lang:type=GarbageCollector,name=ConcurrentMarkSweep";
+            Long _concurrentMarkSweepTime = (Long) zorka.jmx(_mbs, _concurrentMarkSweep, "CollectionTime");
+            addMetricSample("gc.concurrentmarksweep.collectiontime", "GC Concurrent MarkSweep Collection Time", "GAUGE", "ms", timestamp, _concurrentMarkSweepTime);
+
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting system stats");
         } catch (Exception e) {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished collecting system stats with error: ", e);
