@@ -2,12 +2,12 @@
 
 // To run:
 //  1. update zorka.properties to add it to list of loaded scripts, i.e. scripts = jvm.bsh, wildcard-example.bsh
-//  2. update zorka.properties to set zorka.application = Caculator
+//  2. update zorka.properties to set zorka.application = Calculator
 //  3. get the api key by creating a java datasource on Netuitive Cloud: [https://app.netuitive.com].
 //  4. update zorka.properties to set netuitive.api.key using the key obtained from previous step.
 //  5. assuming 'java' command is available from system path, type 'java -javaagent:./netuitive.jar=. -jar zorka-core-test.jar
 //  6. upon prompt, start typing 1+2[enter] 3-3[enter] 2*3[enter] 3/3[enter] 3/0[enter] ...
-//  7. observe a jvm element named 'Calculator' shows up in Netuitive with genernal jvm system metrics and the CalculatorStats method call metrics
+//  7. observe a jvm element named 'Calculator' shows up in Netuitive with general jvm system metrics and the CalculatorStats method call metrics
 
 // Call zorka.require(...) to load additional scripts that this one depends on.
 zorka.require("jvm.bsh");
@@ -16,13 +16,24 @@ zorka.require("jvm.bsh");
 __mbsRegister() {
   process(record) {
     synchronized (super) {
-        //grabbing method and class names from the stack
+        //number of packages to include in the metric name. use -1 to include all
+        packageLimit = -1;
         length = Thread.currentThread().getStackTrace().length;
         methodName = Thread.currentThread().getStackTrace()[length - 2].getMethodName();
-        className = Thread.currentThread().getStackTrace()[length - 2].getClassName();
+        packagePath = Thread.currentThread().getStackTrace()[length - 2].getClassName();
+        packageName = null;
+        //calculate packages to include
+        for (int i = packagePath.length() - 1; i >= 0 && packageLimit > 0; i--) {
+            if (packagePath.charAt(i) == '.') {
+                packageLimit--;
+                if (packageLimit == 0) {
+                    packageName = packagePath.substring(i+1);
+                }
+            }
+        }
         //adding them to the spy map
         record.put("METHOD_NAME", methodName);
-        record.put("CLASS_NAME", className);
+        record.put("CLASS_NAME", packageName == null ? packagePath : packageName);
     }
     return record;
   }
