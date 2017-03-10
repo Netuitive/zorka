@@ -5,4 +5,13 @@ jdk:
   - openjdk7
   - openjdk6
 script:
-  - mvn test
+  - mvn test install
+deploy:
+  provider: releases
+  api_key:
+    secure: f82LV3fuQQrRMtk332YdjsC6DYJFFufEImG1fe8ieUfwqAKKNs9MKAtDvTyvMSwMB262GQH5E/lvgqYLiNr0Pky3iFccRq6cLsO3AyP9L0YukiiOYaRXdFFOZ2kOQZKiYmpVes/cvIogimtfFNKhqKmnntcMzQP+iCBRjSAowVSxCgkSyWCEmsQQqvconJoHyABGhHcbCJV9mMm79LFEEuJib4YwqstWlCCz1O40012CWsTG9V/9fs7bTHHcH2Ulre/pmfFXHbvbhSUGr6m1WvG2r/ixgHDrqTa6P0QhXD3yhVemq+sMXROvh4I9ca34K9j0Fhviytr9uHL70Wk4MH38u3PU2pB5bGSOVhO630KoNNtjbEU0IWhSvPOyquoCyprVDU9gxRHSBbRWAdUsahQ+mfX1sIwgwumEYPdk4N+n8hZenu/kuYHv4XCgVJyhq/ZS9r+/+2WRkGjvB2704JY7Wpj4U68XH3GoUAm0SiuKi9uoVbwcoQIPea/jB3kI3cVoTj9mXYkWAnGXMKMD2lYBDLUg4IofsheQEQmqKNT2hc1EWNTpSFc4YXbKsV5819QIDiQElgVTKWgW8QvmCGqosVuKU79XEWsFYhtPBtHWzr2wOPcF8RPS7QBUArBj8vv/Uh9ZSUvBelxpuMM9sXUEpNrtk1I8l+cjD4DAWuc=
+  file: zorka-dist/target/netuitive-zorka.zip
+  skip_cleanup: true
+  on:
+    tags: true
+    jdk: oraclejdk8
