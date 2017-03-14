@@ -34,4 +34,5 @@ CMD sed -i -e "s/netuitive.api.key\ =\ <Your Java Data Source Api Key>/netuitive
     echo "Configuring HTTP VAR with $HTTP_VAR" && \
     sed -i -e "s/api\.app\.netuitive\.com/${API_URL}/g" /opt/zorka/zorka.properties && \
     echo "Configuring API URL with $API_URL" && \
+    sed -i -e "s/scripts\ =\ jvm\.bsh/scripts\ =\ jvm\.bsh,calculator\.bsh/g" /opt/zorka/zorka.properties && \
     java -javaagent:/opt/zorka/netuitive.jar=/opt/zorka -jar zorka-core-test.jar
