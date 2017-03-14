@@ -54,7 +54,7 @@
                                         <include name="**"/>
                                     </fileset>
                                 </copy>
-                                <zip destfile="${project.build.directory}/netuitive-zorka-${project.version}.zip">
+                                <zip destfile="${project.build.directory}/netuitive-zorka.zip">
                                     <fileset dir="${project.build.outputDirectory}" defaultexcludes="false">
                                         <include name="**"/>
                                     </fileset>
