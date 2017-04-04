@@ -123,6 +123,14 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             Long _concurrentMarkSweepTime = (Long) zorka.jmx(_mbs, _concurrentMarkSweep, "CollectionTime");
             addMetricSample("gc.concurrentmarksweep.collectiontime", "GC Concurrent MarkSweep Collection Time", "GAUGE", "ms", timestamp, _concurrentMarkSweepTime);
 
+            String _G1OldGeneration = "java.lang:type=GarbageCollector,name=G1 Old Generation";
+            Long _G1OldGenerationTime = (Long) zorka.jmx(_mbs, _G1OldGeneration, "CollectionTime");
+            addMetricSample("gc.g1oldgeneration.collectiontime", "GC G1 Old Generation Collection Time", "GAUGE", "ms", timestamp, _G1OldGenerationTime);
+
+            String _G1YoungGeneration = "java.lang:type=GarbageCollector,name=G1 Young Generation";
+            Long _G1YoungGenerationTime = (Long) zorka.jmx(_mbs, _G1YoungGeneration, "CollectionTime");
+            addMetricSample("gc.g1newgeneration.collectiontime", "GC G1 Young Generation Collection Time", "GAUGE", "ms", timestamp, _G1YoungGenerationTime);
+
             log.debug(ZorkaLogger.ZPM_DEBUG, "finished collecting system stats");
         } catch (Exception e) {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished collecting system stats with error: ", e);

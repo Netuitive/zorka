@@ -5,7 +5,7 @@
     <parent>
         <artifactId>zorka</artifactId>
         <groupId>com.jitlogic.zorka</groupId>
-        <version>1.2.1</version>
+        <version>1.2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,7 +54,7 @@
                                         <include name="**"/>
                                     </fileset>
                                 </copy>
-                                <zip destfile="${project.build.directory}/netuitive-zorka-${project.version}.zip">
+                                <zip destfile="${project.build.directory}/netuitive-zorka.zip">
                                     <fileset dir="${project.build.outputDirectory}" defaultexcludes="false">
                                         <include name="**"/>
                                     </fileset>
