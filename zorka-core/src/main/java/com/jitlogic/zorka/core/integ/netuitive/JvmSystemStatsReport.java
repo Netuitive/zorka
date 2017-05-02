@@ -12,9 +12,11 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
 
     /* Logger */
     private final ZorkaLog log = ZorkaLogger.getLog(JvmSystemStatsReport.class);
+    private Java6CpuUsage java6CpuUsage;
 
     public JvmSystemStatsReport(ZorkaConfig config, ZorkaLib zorka) {
         super(config, zorka);
+        java6CpuUsage = new Java6CpuUsage();
     }
 
     @Override
@@ -101,6 +103,15 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             //cpu
             String _osmbean = "java.lang:type=OperatingSystem";
             Double processCpuLoad = (Double) zorka.jmx(_mbs, _osmbean, "ProcessCpuLoad");
+            if (processCpuLoad == null) {
+                Integer numCpus = (Integer) zorka.jmx(_mbs, _osmbean, "AvailableProcessors");
+                Long processCpuTime = (Long) zorka.jmx(_mbs, _osmbean, "ProcessCpuTime");
+                String _jvmmbean = "java.lang:type=Runtime";
+                Long upTime = (Long) zorka.jmx(_mbs, _jvmmbean, "Uptime");
+
+                processCpuLoad = java6CpuUsage.calculate(numCpus, upTime, processCpuTime);
+            }
+
             if (processCpuLoad != null) {
                 elementBuilder.metric("cpu.used.percent", "Operating System Process CPU Load", "GAUGE", "%");
                 elementBuilder.sample("cpu.used.percent", timestamp, processCpuLoad * 100);
