@@ -17,8 +17,6 @@ RUN mvn -pl '!zorka-dist' install
 ADD . /opt/app
 RUN mvn clean install
 
-RUN ls -l zorka-dist/target/
-
 RUN mv zorka-dist/target/output/netuitive-zorka-*? /opt/zorka
 
 WORKDIR /opt/zorka

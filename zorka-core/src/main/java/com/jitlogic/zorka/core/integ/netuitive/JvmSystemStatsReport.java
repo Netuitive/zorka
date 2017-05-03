@@ -12,9 +12,11 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
 
     /* Logger */
     private final ZorkaLog log = ZorkaLogger.getLog(JvmSystemStatsReport.class);
+    private Java6CpuUsage java6CpuUsage;
 
     public JvmSystemStatsReport(ZorkaConfig config, ZorkaLib zorka) {
         super(config, zorka);
+        java6CpuUsage = new Java6CpuUsage();
     }
 
     @Override
@@ -75,6 +77,16 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
 
             Long psogMax = (Long) zorka.jmx(_mbs, _psogmbean, "Usage", "max");
             addMetricSample("mempool.psoldgen.max", "Memory Pool PS Old Gen Max", "GAUGE", "B", timestamp, psogMax);
+            
+            String _pgmbean = "java.lang:type=MemoryPool,name=PS Perm Gen";
+            Long pgCommitted = (Long) zorka.jmx(_mbs, _pgmbean, "Usage", "committed");
+            addMetricSample("mempool.pspermgen.committed", "Memory Pool PS Perm Gen Committed", "GAUGE", "B", timestamp, pgCommitted);
+
+            Long pgUsed = (Long) zorka.jmx(_mbs, _pgmbean, "Usage", "used");
+            addMetricSample("mempool.pspermgen.used", "Memory Pool PS Perm Gen Used", "GAUGE", "B", timestamp, pgUsed);
+
+            Long pgMax = (Long) zorka.jmx(_mbs, _pgmbean, "Usage", "max");
+            addMetricSample("mempool.pspermgen.max", "Memory Pool PS Perm Gen Max", "GAUGE", "B", timestamp, pgMax);
 
             String _msmbean = "java.lang:type=MemoryPool,name=Metaspace";
             Long msCommitted = (Long) zorka.jmx(_mbs, _msmbean, "Usage", "committed");
@@ -101,6 +113,15 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             //cpu
             String _osmbean = "java.lang:type=OperatingSystem";
             Double processCpuLoad = (Double) zorka.jmx(_mbs, _osmbean, "ProcessCpuLoad");
+            if (processCpuLoad == null) {
+                Integer numCpus = (Integer) zorka.jmx(_mbs, _osmbean, "AvailableProcessors");
+                Long processCpuTime = (Long) zorka.jmx(_mbs, _osmbean, "ProcessCpuTime");
+                String _jvmmbean = "java.lang:type=Runtime";
+                Long upTime = (Long) zorka.jmx(_mbs, _jvmmbean, "Uptime");
+
+                processCpuLoad = java6CpuUsage.calculate(numCpus, upTime, processCpuTime);
+            }
+
             if (processCpuLoad != null) {
                 elementBuilder.metric("cpu.used.percent", "Operating System Process CPU Load", "GAUGE", "%");
                 elementBuilder.sample("cpu.used.percent", timestamp, processCpuLoad * 100);

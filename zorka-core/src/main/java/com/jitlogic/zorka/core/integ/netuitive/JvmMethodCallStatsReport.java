@@ -52,6 +52,17 @@ public class JvmMethodCallStatsReport extends AbstractStatsReport {
             log.error(ZorkaLogger.ZPM_ERRORS, "finished collecting method call stats with error: ", ex);
         }
 
+        String tagStrings = config.stringCfg("netuitive.api.tags", "");
+
+        if (tagStrings.trim().length() != 0) {
+            for (String tagString : tagStrings.split(",")) {
+                String[] tagParts = tagString.split(":");
+                if (tagParts.length == 2) {
+                    e.addTag(tagParts[0].trim(), tagParts[1].trim());
+                }
+            }
+        }
+
         return e;
     }
 
