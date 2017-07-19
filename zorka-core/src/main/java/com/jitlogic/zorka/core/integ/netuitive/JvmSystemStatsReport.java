@@ -77,7 +77,7 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
 
             Long psogMax = (Long) zorka.jmx(_mbs, _psogmbean, "Usage", "max");
             addMetricSample("mempool.psoldgen.max", "Memory Pool PS Old Gen Max", "GAUGE", "B", timestamp, psogMax);
-            
+
             String _pgmbean = "java.lang:type=MemoryPool,name=PS Perm Gen";
             Long pgCommitted = (Long) zorka.jmx(_mbs, _pgmbean, "Usage", "committed");
             addMetricSample("mempool.pspermgen.committed", "Memory Pool PS Perm Gen Committed", "GAUGE", "B", timestamp, pgCommitted);
@@ -93,6 +93,8 @@ public class JvmSystemStatsReport extends AbstractStatsReport {
             addMetricSample("mempool.metaspace.committed", "Memory Pool Metaspace Committed", "GAUGE", "B", timestamp, msCommitted);
             Long msUsed = (Long) zorka.jmx(_mbs, _msmbean, "Usage", "used");
             addMetricSample("mempool.metaspace.used", "Memory Pool Metaspace Used", "GAUGE", "B", timestamp, msUsed);
+            Long msMax = (Long) zorka.jmx(_mbs, _msmbean, "Usage", "max");
+            addMetricSample("mempool.metaspace.max", "Memory Pool Metaspace Max", "GAUGE", "B", timestamp, msMax);
 
             String _ccsmbean = "java.lang:type=MemoryPool,name=Compressed Class Space";
             Long ccsCommitted = (Long) zorka.jmx(_mbs, _ccsmbean, "Usage", "committed");

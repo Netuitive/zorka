@@ -1,3 +1,18 @@
+Zorka 1.2.4 (2017-07-19)
+-------------------------
+* Adding collection for metaspace max metric
+
+Zorka 1.2.3 (2017-05-03)
+-------------------------
+* Added support for Element Tags
+* Added CPU metric support for Java 6
+* Added PermGen memory pool stats
+
+Zorka 1.2.2 (2017-04-04)
+-------------------------
+* Add GI collector garbage collection support
+* Improved deployment automation
+
 Zorka 1.2.1 (2017-02-08)
 -------------------------
 * Add concurrent collector garbage collection support
@@ -30,7 +45,7 @@ Zorka 1.0.14 (2015-11-05)
 Zorka 1.0.13 (2015-09-02)
 -------------------------
 
-* Data uploaded to netuitive is now in a multiple statistic format. 
+* Data uploaded to netuitive is now in a multiple statistic format.
 
 
 Zorka 1.0.12 (2015-03-01)
@@ -387,5 +402,3 @@ Zorka 0.1 (2012-09-19)
  * zabbix integration;
  * basic functions for accessing JMX data;
  * rudimentary instrumentation engine (ZorkaSpy);
-
-
