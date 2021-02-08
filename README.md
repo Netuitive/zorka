@@ -4,7 +4,7 @@ Netuitive Java Agent
 
 The Netuitive Java Agent leverages the Zorka Agent and Zorka Spy to instrument a programmable bytecode instrumentation engine that's useful in monitoring Java applications and is capable of tracing (profiling) production environments. It is designed to integrate your Java applications seamlessly with [Netuitive](https://http://www.netuitive.com/).
 
-See the Netuitive [help docs](https://help.netuitive.com/Content/Misc/Datasources/new_jvm_datasource.htm) for more information, or contact Netuitive support at [support@netuitive.com](mailto:support@netuitive.com).
+See the Netuitive [help docs](https://docs.virtana.com/en/java-agent.html) for more information, or contact Netuitive support at [support@netuitive.com](mailto:support@netuitive.com).
 
 Changes to the Zorka Agent
 ---------------------------
